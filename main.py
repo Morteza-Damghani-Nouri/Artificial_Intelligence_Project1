@@ -1,10 +1,44 @@
+# This class determines the location of nodes
+class Location:
+    def __init__(self, input_row, input_column):
+        self.row = input_row
+        self.column = input_column
 
-class location:
+
     row = -1
     column = -1
 
 
+# This class simulates the nodes in the search graph
+class Node:
+    def __init__(self, input_location):
+        self.location = input_location
 
+
+
+
+    location = ""
+    parent = ""
+    children = []
+    content = ""
+    cost = ""
+
+
+
+
+
+
+
+
+
+# This function checks if the input location is available in input array or not
+def does_exist(input_array, input_row, input_column, row, column):
+    if 0 <= input_row < row and 0 <= input_column < column:
+        return True
+    return False
+
+
+# This function finds the robot location
 def robot_location_finder(input_array, row, column):
     i = 0
     while i < row:
@@ -12,9 +46,7 @@ def robot_location_finder(input_array, row, column):
         while j < column:
 
             if input_array[i][j].find("r") != -1:
-                robot_location = location()
-                robot_location.row = i
-                robot_location.column = j
+                robot_location = Location(i, j)
                 return robot_location
 
             j += 1
@@ -22,14 +54,184 @@ def robot_location_finder(input_array, row, column):
         i += 1
 
 
+# This function checks if the butter is available among the input children or not
+def is_butter_available(children):
+    for i in children:
+        print("content: " + i.content)
+        if i.content.find('b') != -1:
+            return i
+    return False
+
+
+# This function finds the cost of the input node
+def cost_finder(node):
+    content = node.content
+    if content.find('p') == -1 and content.find('b') == -1 and content.find('r') == -1:
+        return int(content)
+
+    content = content.rstrip(content[-1])
+    return int(content)
+
+
+# This function finds the node with the minimum cost
+def minimum_cost_finder(input_list):
+    minimum_cost_node = input_list[0]
+    index = 0
+    i = 1
+    while i < len(input_list):
+        if input_list[i].cost < minimum_cost_node.cost:
+            minimum_cost_node = input_list[i]
+            index = i
+        i += 1
+
+    return [minimum_cost_node, index]
 
 
 
 
 
 
+
+
+
+# This function finds the children of the input node while searching for the first butter
+def butter_children_finder(input_array, node, row, column):
+    node_row = node.location.row
+    node_column = node.location.column
+    children = []
+    if does_exist(input_array, node_row, node_column + 1, row, column):
+        if input_array[node_row][node_column + 1] != "x":
+            child = Node(Location(node_row, node_column + 1))
+            child.parent = node
+            child.content = input_array[node_row][node_column + 1]
+            child.cost = cost_finder(child)
+            children.append(child)
+
+    if does_exist(input_array, node_row, node_column - 1, row, column):
+        if input_array[node_row][node_column - 1] != "x":
+            child = Node(Location(node_row, node_column - 1))
+            child.parent = node
+            child.content = input_array[node_row][node_column - 1]
+            child.cost = cost_finder(child)
+            children.append(child)
+
+    if does_exist(input_array, node_row + 1, node_column, row, column):
+        if input_array[node_row + 1][node_column] != "x":
+            child = Node(Location(node_row + 1, node_column))
+            child.parent = node
+            child.content = input_array[node_row + 1][node_column]
+            child.cost = cost_finder(child)
+            children.append(child)
+
+    if does_exist(input_array, node_row - 1, node_column, row, column):
+        if input_array[node_row - 1][node_column] != "x":
+            child = Node(Location(node_row - 1, node_column))
+            child.parent = node
+            child.content = input_array[node_row - 1][node_column]
+            child.cost = cost_finder(child)
+            children.append(child)
+
+
+
+    if node.parent != "":
+        parent_node = node.parent
+        for i in children:
+            if i.location.row == parent_node.location.row and i.location.column == parent_node.location.column:
+                children.remove(i)
+                break
+
+    return children
+
+
+
+# This function implements the IDS algorithm
 def ids_algorithm(input_array, row, column):
-    print(str(robot_location_finder(input_array, row, column).row) + "  " + str(robot_location_finder(input_array, row, column).column))
+    robot_location = robot_location_finder(input_array, row, column)
+    finished = False
+    allowed_depth = 1
+    current_depth = 0
+    current_node = Node(robot_location)
+    current_node.children = butter_children_finder(input_array, current_node, row, column)
+    current_node.content = input_array[robot_location.row][robot_location.column]
+    path = [current_node]
+    butter_node = ""
+    print("children:")
+    for i in current_node.children:
+        print(str(i.location.row) + ", " + str(i.location.column))
+
+    print("==========")
+
+    while True:
+        while current_depth < allowed_depth:
+            print("children:")
+            for i in current_node.children:
+                print(str(i.location.row) + ", " + str(i.location.column))
+            print("==========")
+            if len(current_node.children) != 0:
+                is_butter_available_result = is_butter_available(current_node.children)
+                if is_butter_available_result == False:
+                    [next_node, index] = minimum_cost_finder(current_node.children)
+                    current_node.children.pop(index)
+                    current_node = next_node
+                    path.append(current_node)
+                    current_depth += 1
+                    current_node.children = butter_children_finder(input_array, current_node, row, column)
+
+
+
+
+
+
+
+                else:
+                    butter_node = is_butter_available_result
+                    finished = True
+                    break
+
+            else:
+                if current_node.parent != "":
+                    current_node = current_node.parent
+                    path.append(current_node)
+                    current_depth = current_depth - 1
+
+                else:
+                    current_depth = 0
+                    allowed_depth = allowed_depth + 1
+                    current_node = Node(robot_location)
+                    current_node.children = butter_children_finder(input_array, current_node, row, column)
+                    current_node.content = input_array[robot_location.row][robot_location.column]
+                    path = [current_node]
+
+
+
+
+
+
+
+
+        if finished:
+            break
+        else:
+            current_depth = current_depth - 1
+            current_node = current_node.parent
+            path.append(current_node)
+
+
+
+
+    print("butter_node_location: " + str(butter_node.location.row) + ", " + str(butter_node.location.column))
+    for i in path:
+        print(str(i.location.row) + ", " + str(i.location.column))
+
+
+
+
+
+
+
+
+
+
 
 
 
