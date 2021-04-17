@@ -62,6 +62,14 @@ def is_butter_available(children):
     return False
 
 
+# This function checks if input location is available among the input children or not
+def is_local_goal_available(children, location):
+    for i in children:
+        if i.location.row == location.row and i.location.column == location.column:
+            return i
+    return False
+
+
 # This function finds the cost of the input node
 def cost_finder(node):
     content = node.content
@@ -155,7 +163,7 @@ def butter_children_finder(input_array, node, row, column):
 
 
 # This function moves the robot to the cell which is behind the butter
-def behind_butter_finder(input_array, row, column, robot_location):
+def behind_butter_finder(input_array, row, column, robot_location, local_goal_location):
     finished = False
     allowed_depth = 1
     current_depth = 0
@@ -164,12 +172,13 @@ def behind_butter_finder(input_array, row, column, robot_location):
     current_node.content = input_array[robot_location.row][robot_location.column]
     path = [current_node]
     butter_node = ""
+    failure = False
 
     while True:
         while current_depth < allowed_depth:
             if len(current_node.children) != 0:
-                is_butter_available_result = is_butter_available(current_node.children)
-                if is_butter_available_result == False:
+                is_local_goal_available_result = is_local_goal_available(current_node.children, local_goal_location)
+                if is_local_goal_available_result == False:
                     [next_node, index] = minimum_cost_finder(current_node.children)
                     current_node.children.pop(index)
                     current_node = next_node
@@ -184,7 +193,7 @@ def behind_butter_finder(input_array, row, column, robot_location):
 
 
                 else:
-                    butter_node = is_butter_available_result
+                    butter_node = is_local_goal_available_result
                     finished = True
                     break
 
@@ -196,11 +205,18 @@ def behind_butter_finder(input_array, row, column, robot_location):
 
                 else:
                     current_depth = 0
+                    if allowed_depth >= 100000:
+                        failure = True
+                        break
                     allowed_depth = allowed_depth + 1
                     current_node = Node(robot_location)
                     current_node.children = butter_children_finder(input_array, current_node, row, column)
                     current_node.content = input_array[robot_location.row][robot_location.column]
 
+
+
+        if failure:
+            return [failure, path]
         if finished:
             break
         else:
@@ -211,7 +227,7 @@ def behind_butter_finder(input_array, row, column, robot_location):
 
 
     path += butter_node
-    return path
+    return [failure, path]
 
 
 
@@ -229,6 +245,7 @@ def ids_algorithm(input_array, row, column):
     butter_node = ""
 
 
+
     while True:
         while current_depth < allowed_depth:
             if len(current_node.children) != 0:
@@ -264,7 +281,6 @@ def ids_algorithm(input_array, row, column):
                     current_node = Node(robot_location)
                     current_node.children = butter_children_finder(input_array, current_node, row, column)
                     current_node.content = input_array[robot_location.row][robot_location.column]
-
 
 
 
@@ -324,7 +340,7 @@ def ids_algorithm(input_array, row, column):
             [next_node, index] = minimum_cost_finder(butter_node.children)
             if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column - 1:
                 if copy_input_array[butter_node.location.row][butter_node.location.column + 1] != "x":
-
+                    [failure_result, path] = # HEREEEEEEEEEEEE
 
 
 
