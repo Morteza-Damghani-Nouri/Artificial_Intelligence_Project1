@@ -62,6 +62,15 @@ def is_butter_available(children):
     return False
 
 
+# This function checks if the goal is available among the input children or not
+def is_goal_available(children):
+    for i in children:
+        if i.content.find('p') != -1:
+            return i
+    return False
+
+
+
 # This function checks if input location is available among the input children or not
 def is_local_goal_available(children, location):
     for i in children:
@@ -162,14 +171,14 @@ def butter_children_finder(input_array, node, row, column):
     return children
 
 
-# This function moves the robot to the cell which is behind the butter
-def behind_butter_finder(input_array, row, column, robot_location, local_goal_location):
+# This function is used to find the proper location of the robot to push the butter
+def ids_location_finder(input_array, row, column, start_location, local_goal_location):
     finished = False
     allowed_depth = 1
     current_depth = 0
-    current_node = Node(robot_location)
+    current_node = Node(start_location)
     current_node.children = butter_children_finder(input_array, current_node, row, column)
-    current_node.content = input_array[robot_location.row][robot_location.column]
+    current_node.content = input_array[start_location.row][start_location.column]
     path = [current_node]
     butter_node = ""
     failure = False
@@ -185,9 +194,6 @@ def behind_butter_finder(input_array, row, column, robot_location, local_goal_lo
                     path.append(current_node)
                     current_depth += 1
                     current_node.children = butter_children_finder(input_array, current_node, row, column)
-
-
-
 
 
 
@@ -209,9 +215,10 @@ def behind_butter_finder(input_array, row, column, robot_location, local_goal_lo
                         failure = True
                         break
                     allowed_depth = allowed_depth + 1
-                    current_node = Node(robot_location)
+                    current_node = Node(start_location)
                     current_node.children = butter_children_finder(input_array, current_node, row, column)
-                    current_node.content = input_array[robot_location.row][robot_location.column]
+                    current_node.content = input_array[start_location.row][start_location.column]
+                    path = [current_node]
 
 
 
@@ -226,10 +233,74 @@ def behind_butter_finder(input_array, row, column, robot_location, local_goal_lo
 
 
 
-    path += butter_node
+    path.append(butter_node)
     return [failure, path]
 
 
+# This function is used to find the goal of the input file by IDS algorithm
+def ids_goal_finder(input_array, row, column, start_location):
+    finished = False
+    allowed_depth = 1
+    current_depth = 0
+    current_node = Node(start_location)
+    current_node.children = butter_children_finder(input_array, current_node, row, column)
+    current_node.content = input_array[start_location.row][start_location.column]
+    path = [current_node]
+    butter_node = ""
+    failure = False
+
+    while True:
+        while current_depth < allowed_depth:
+            if len(current_node.children) != 0:
+                is_goal_available_result = is_goal_available(current_node.children)
+                if is_goal_available_result == False:
+                    [next_node, index] = minimum_cost_finder(current_node.children)
+                    current_node.children.pop(index)
+                    current_node = next_node
+                    path.append(current_node)
+                    current_depth += 1
+                    current_node.children = butter_children_finder(input_array, current_node, row, column)
+
+
+
+
+                else:
+                    butter_node = is_goal_available_result
+                    finished = True
+                    break
+
+            else:
+                if current_node.parent != "":
+                    current_node = current_node.parent
+                    path.append(current_node)
+                    current_depth = current_depth - 1
+
+                else:
+                    current_depth = 0
+                    if allowed_depth >= 100000:
+                        failure = True
+                        break
+                    allowed_depth = allowed_depth + 1
+                    current_node = Node(start_location)
+                    current_node.children = butter_children_finder(input_array, current_node, row, column)
+                    current_node.content = input_array[start_location.row][start_location.column]
+                    path = [current_node]
+
+
+
+        if failure:
+            return [failure, path]
+        if finished:
+            break
+        else:
+            current_depth = current_depth - 1
+            current_node = current_node.parent
+            path.append(current_node)
+
+
+
+    path.append(butter_node)
+    return [failure, path]
 
 
 # This function implements the IDS algorithm
@@ -243,7 +314,7 @@ def ids_algorithm(input_array, row, column):
     current_node.content = input_array[robot_location.row][robot_location.column]
     path = [current_node]
     butter_node = ""
-
+    butter_finding_failure = False
 
 
     while True:
@@ -260,10 +331,6 @@ def ids_algorithm(input_array, row, column):
 
 
 
-
-
-
-
                 else:
                     butter_node = is_butter_available_result
                     finished = True
@@ -277,14 +344,20 @@ def ids_algorithm(input_array, row, column):
 
                 else:
                     current_depth = 0
+                    if allowed_depth >= 100000:
+                        butter_finding_failure = True
+                        break
                     allowed_depth = allowed_depth + 1
                     current_node = Node(robot_location)
                     current_node.children = butter_children_finder(input_array, current_node, row, column)
                     current_node.content = input_array[robot_location.row][robot_location.column]
+                    path = [current_node]
 
 
 
-
+        if butter_finding_failure:
+            print("UNABLE TO FIND A PATH TO THE BUTTER BY IDS")
+            return 0
         if finished:
             break
         else:
@@ -297,8 +370,8 @@ def ids_algorithm(input_array, row, column):
 
 
     # print("path: ")
-    # for i in path:
-    #     print(str(i.location.row) + ", " + str(i.location.column))
+    for i in path:
+        print(str(i.location.row) + ", " + str(i.location.column))
     # print("===============")
     # print("Butter location: ")
     # print(str(butter_node.location.row) + ", " + str(butter_node.location.column))
@@ -306,72 +379,38 @@ def ids_algorithm(input_array, row, column):
     # print(str(current_node.location.row) + ", " + str(current_node.location.column))
 
 
-
-    copy_input_array = input_array
-    i = 0
-    while i < row:
-        j = 0
-        while j < column:
-            print(copy_input_array[i][j].find("b"))
-            if copy_input_array[i][j].find("b") != -1:
-                copy_input_array[i][j] = "x"
-
-
-            j += 1
-
-        i += 1
-
     robot_location = current_node.location
-    goal_finished = False
-    allowed_depth = 1
-    current_depth = 0
+    [goal_finding_failure, local_path] = ids_goal_finder(input_array, row, column, butter_node.location)
+    if goal_finding_failure:
+        print("UNABLE TO FIND A PATH FROM BUTTER TO THE GOAL BY IDS")
+    else:
+        copy_input_array = input_array
+
+        i = 1
+        while i < len(local_path):
+            current_butter_location = local_path[i].location
+            previous_butter_location = local_path[i - 1].location
+            copy_input_array[current_butter_location.row][current_butter_location.column] = "x"
 
 
-    current_node = Node(robot_location)
-    current_node.children = butter_children_finder(input_array, current_node, row, column)
-    current_node.content = input_array[robot_location.row][robot_location.column]
-    new_path = []
+            if current_butter_location.row == previous_butter_location.row and current_butter_location.column == previous_butter_location.column - 1:
+                if copy_input_array[previous_butter_location.row][previous_butter_location.column + 1] != "x":
+                    local_goal_location = Location(previous_butter_location.row, previous_butter_location.column + 1)
+                    [behind_the_butter_finding_failure, behind_the_butter_path] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location)
+                    if behind_the_butter_finding_failure:
+                        print("UNABLE TO FIND A PATH A PROPER LOCATION TO MOVE THE BUTTER")
+                        break
 
-    butter_node.children = butter_children_finder(copy_input_array, butter_node, row, column)
-
-    while True:
-
-        if len(butter_node.children) != 0:
-            [next_node, index] = minimum_cost_finder(butter_node.children)
-            if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column - 1:
-                if copy_input_array[butter_node.location.row][butter_node.location.column + 1] != "x":
-                    [failure_result, path] = # HEREEEEEEEEEEEE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    else:
+                        for j in behind_the_butter_path:
+                            path.append(j)
+                        robot_location = local_goal_location
 
                 else:
-                    butter_node.children.pop(index)
+                    print("UNABLE TO FIND A PATH A PROPER LOCATION TO MOVE THE BUTTER")
+                    break
 
-            if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column + 1:
-                pass
-
-            if next_node.location.row == butter_node.location.row - 1 and next_node.location.column == butter_node.location.column:
-                pass
-
-            if next_node.location.row == butter_node.location.row + 1 and next_node.location.column == butter_node.location.column:
-                pass
-
-
-        else:
-            print("FAILURE")
-            break
+                # here here here copy the above if with proper values
 
 
 
@@ -379,14 +418,7 @@ def ids_algorithm(input_array, row, column):
 
 
 
-
-
-
-
-
-
-
-
+            i += 1
 
 
 # Main part of the project starts here
