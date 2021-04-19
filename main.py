@@ -459,6 +459,7 @@ def ids_algorithm(input_array, row, column):
 
                     else:
                         robot_location = butter_node.location
+                        path.append(Node(robot_location))
                         butter_path.append(next_node.location)
                         if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
                             goal_finished = True
@@ -496,6 +497,7 @@ def ids_algorithm(input_array, row, column):
 
                     else:
                         robot_location = butter_node.location
+                        path.append(Node(robot_location))
                         butter_path.append(next_node.location)
                         if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
                             goal_finished = True
@@ -531,6 +533,7 @@ def ids_algorithm(input_array, row, column):
 
                     else:
                         robot_location = butter_node.location
+                        path.append(Node(robot_location))
                         butter_path.append(next_node.location)
                         if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
                             goal_finished = True
@@ -566,6 +569,7 @@ def ids_algorithm(input_array, row, column):
 
                     else:
                         robot_location = butter_node.location
+                        path.append(Node(robot_location))
                         butter_path.append(next_node.location)
                         if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
                             goal_finished = True
@@ -587,6 +591,7 @@ def ids_algorithm(input_array, row, column):
         else:
             if (butter_node.location.row == 0 and butter_node.location.column == 0) or (butter_node.location.row == 0 and butter_node.location.column == column - 1) or (butter_node.location.row == row - 1 and butter_node.location.column == 0) or (butter_node.location.row == row - 1 and butter_node.location.column == column - 1):
                 robot_location = butter_node.location
+                path.append(Node(robot_location))
                 butter_path.append(next_node.location)
                 if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
                     goal_finished = True
@@ -619,7 +624,11 @@ def ids_algorithm(input_array, row, column):
         print(str(i.location.row) + ", " + str(i.location.column))
 
     print("=================")
+    print("The butter path: ")
+    for i in butter_path:
+        print(str(i.row) + ", " + str(i.column))
 
+    print("=================")
 
 
 
