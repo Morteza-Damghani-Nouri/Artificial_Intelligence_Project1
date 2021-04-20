@@ -92,11 +92,14 @@ def cost_finder(node):
 
 # This function prints the map of the search
 def map_printer(input_array):
+
     for i in input_array:
         row = ""
         for j in i:
-            row += j + " " * (8 - len(j))
-        print(row)
+            row += "|" + 4 * " " + j + " " * 4
+        print(row + "|")
+
+
 
 
 # This function finds the first children node of the input array
@@ -262,6 +265,17 @@ def ids_location_finder(input_array, row, column, start_location, local_goal_loc
     return [failure, path]
 
 
+# This function locates the places of Xs in the input array in another array and returns the array
+def x_locator(input_array):
+    output_array = []
+    for i in input_array:
+        for j in i:
+            output_array[i][j] = " "
+            if input_array[i][j] == "x":
+                output_array[i][j] = "x"
+    return output_array
+
+
 # This function copies the input array
 def array_copier(input_array):
     copied_array = []
@@ -412,7 +426,7 @@ def ids_algorithm(input_array, row, column):
     # print(str(current_node.location.row) + ", " + str(current_node.location.column))
 
 
-    # HEEEEEEEERE is the proper place to put that algorithm in my_algorithm2
+
 
     copy_input_array = array_copier(input_array)
 
