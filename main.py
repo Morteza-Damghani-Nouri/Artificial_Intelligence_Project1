@@ -201,12 +201,16 @@ def goal_children_finder(input_array, node, row, column):
 
 
 # This function is used to find the proper location of the robot to push the butter
-def ids_location_finder(input_array, row, column, start_location, local_goal_location):
+def ids_location_finder(input_array, row, column, start_location, local_goal_location, opened_nodes, generated_nodes):
     finished = False
     allowed_depth = 1
     current_depth = 0
+    unchanged_opened_nodes = opened_nodes
+    unchanged_generated_nodes = generated_nodes
     current_node = Node(start_location)
+    opened_nodes += 1
     current_node.children = butter_children_finder(input_array, current_node, row, column)
+    generated_nodes += 1
     current_node.content = input_array[start_location.row][start_location.column]
     path = [current_node]
     butter_node = ""
@@ -216,6 +220,7 @@ def ids_location_finder(input_array, row, column, start_location, local_goal_loc
         while current_depth < allowed_depth:
             if len(current_node.children) != 0:
                 is_local_goal_available_result = is_local_goal_available(current_node.children, local_goal_location)
+                generated_nodes += len(current_node.children)
                 if is_local_goal_available_result == False:
                     [next_node, index] = first_children_finder(current_node.children)
                     current_node.children.pop(index)
@@ -223,7 +228,7 @@ def ids_location_finder(input_array, row, column, start_location, local_goal_loc
                     path.append(current_node)
                     current_depth += 1
                     current_node.children = butter_children_finder(input_array, current_node, row, column)
-
+                    opened_nodes += 1
 
 
 
@@ -243,6 +248,8 @@ def ids_location_finder(input_array, row, column, start_location, local_goal_loc
                     if allowed_depth >= 100000:
                         failure = True
                         break
+                    generated_nodes = unchanged_generated_nodes + 1
+                    opened_nodes = unchanged_opened_nodes + 1
                     allowed_depth = allowed_depth + 1
                     current_node = Node(start_location)
                     current_node.children = butter_children_finder(input_array, current_node, row, column)
@@ -263,7 +270,7 @@ def ids_location_finder(input_array, row, column, start_location, local_goal_loc
 
 
     path.append(butter_node)
-    return [failure, path]
+    return [failure, path, opened_nodes, generated_nodes, current_depth]
 
 
 # This function locates the places of Xs in the input array in another array and returns the array
@@ -328,27 +335,36 @@ def does_butter_exist(input_array):
 def ids_algorithm(input_array, row, column):
     while does_butter_exist(input_array):
         robot_location = robot_location_finder(input_array, row, column)
+        cost = 0
         finished = False
         allowed_depth = 1
         current_depth = 0
         current_node = Node(robot_location)
         current_node.children = butter_children_finder(input_array, current_node, row, column)
         current_node.content = input_array[robot_location.row][robot_location.column]
-        path = [current_node]
+        current_node.cost = cost_finder(current_node)
         butter_node = ""
         butter_finding_failure = False
+        generated_nodes = 1
+        opened_nodes = 1
+        path = []
 
         while True:
             while current_depth < allowed_depth:
                 if len(current_node.children) != 0:
+                    cost += int(current_node.cost)
                     is_butter_available_result = is_butter_available(current_node.children)
+                    generated_nodes += len(current_node.children)
                     if is_butter_available_result == False:
                         [next_node, index] = first_children_finder(current_node.children)
                         current_node.children.pop(index)
                         current_node = next_node
                         path.append(current_node)
+                        current_node.cost = cost_finder(current_node)
                         current_depth += 1
                         current_node.children = butter_children_finder(input_array, current_node, row, column)
+                        opened_nodes += 1
+
 
 
 
@@ -368,10 +384,13 @@ def ids_algorithm(input_array, row, column):
                         if allowed_depth >= 100000:
                             butter_finding_failure = True
                             break
+                        opened_nodes = 1
                         allowed_depth = allowed_depth + 1
                         current_node = Node(robot_location)
                         current_node.children = butter_children_finder(input_array, current_node, row, column)
+                        generated_nodes = 1
                         current_node.content = input_array[robot_location.row][robot_location.column]
+                        current_node.cost = cost_finder(current_node)
                         path = [current_node]
 
             if butter_finding_failure:
@@ -400,31 +419,34 @@ def ids_algorithm(input_array, row, column):
             map_array[butter_node.location.row][butter_node.location.column] = "b"
             map_printer(map_array)
 
+
+
         print("BUTTER FOUND")
-
-
+        goal_finding_part_depth = 0
+        butter_finding_part_depth = current_depth
         first_robot_location = robot_location
         copy_input_array = array_copier(input_array, row, column)
         robot_location = current_node.location
         goal_finished = False
 
-        # ****** Butter_node location stored here
+
         first_butter_node = butter_node
         butter_path = [butter_node.location]
         butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
 
+        counter = 1
         while True:
-            if len(butter_node.children) != 0:
+            # A number is chose for infinite loop handling
+            if len(butter_node.children) != 0 and counter <= 10000000:
                 [next_node, index] = first_children_finder(butter_node.children)
 
                 if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column - 1:
                     if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column + 1, row,
-                                  column) and copy_input_array[butter_node.location.row][
-                        butter_node.location.column + 1] != "x":
+                                  column) and copy_input_array[butter_node.location.row][butter_node.location.column + 1] != "x":
                         local_goal_location = Location(butter_node.location.row, butter_node.location.column + 1)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path] = ids_location_finder(copy_input_array, row, column,
-                                                                               robot_location, local_goal_location)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            goal_finding_part_depth += output_depth
                         else:
                             failure_result = False
                             local_path = []
@@ -468,12 +490,11 @@ def ids_algorithm(input_array, row, column):
                 if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column + 1:
 
                     if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column - 1, row,
-                                  column) and copy_input_array[butter_node.location.row][
-                        butter_node.location.column - 1] != "x":
+                                  column) and copy_input_array[butter_node.location.row][butter_node.location.column - 1] != "x":
                         local_goal_location = Location(butter_node.location.row, butter_node.location.column - 1)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path] = ids_location_finder(copy_input_array, row, column,
-                                                                               robot_location, local_goal_location)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            goal_finding_part_depth += output_depth
                         else:
                             failure_result = False
                             local_path = []
@@ -516,12 +537,11 @@ def ids_algorithm(input_array, row, column):
 
                 if next_node.location.row == butter_node.location.row - 1 and next_node.location.column == butter_node.location.column:
                     if does_exist(copy_input_array, butter_node.location.row + 1, butter_node.location.column, row,
-                                  column) and copy_input_array[butter_node.location.row + 1][
-                        butter_node.location.column] != "x":
+                                  column) and copy_input_array[butter_node.location.row + 1][butter_node.location.column] != "x":
                         local_goal_location = Location(butter_node.location.row + 1, butter_node.location.column)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path] = ids_location_finder(copy_input_array, row, column,
-                                                                               robot_location, local_goal_location)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            goal_finding_part_depth += output_depth
                         else:
                             failure_result = False
                             local_path = []
@@ -564,12 +584,11 @@ def ids_algorithm(input_array, row, column):
 
                 if next_node.location.row == butter_node.location.row + 1 and next_node.location.column == butter_node.location.column:
                     if does_exist(copy_input_array, butter_node.location.row - 1, butter_node.location.column, row,
-                                  column) and copy_input_array[butter_node.location.row - 1][
-                        butter_node.location.column] != "x":
+                                  column) and copy_input_array[butter_node.location.row - 1][butter_node.location.column] != "x":
                         local_goal_location = Location(butter_node.location.row - 1, butter_node.location.column)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path] = ids_location_finder(copy_input_array, row, column,
-                                                                               robot_location, local_goal_location)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            goal_finding_part_depth += output_depth
                         else:
                             failure_result = False
                             local_path = []
@@ -638,7 +657,7 @@ def ids_algorithm(input_array, row, column):
                 else:
                     print("FAILURE")
                     break
-
+            counter += 1
         if goal_finished:
             map_array = x_locator(input_array, row, column)
             map_array[robot_location.row][robot_location.column] = "r"
@@ -662,6 +681,8 @@ def ids_algorithm(input_array, row, column):
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
             map_printer(input_array)
+
+
 
 
 
