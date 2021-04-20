@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4a0df3a0-a147-4044-b7f5-45873af2e81a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/test3.txt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -36,7 +37,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Artificial Intelligence Project1" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -59,9 +60,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test3.txt" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Artificial Intelligence Project1" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test3.txt.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.test3.txt" />
       </list>
     </recent_temporary>
   </component>
@@ -79,7 +103,7 @@
       <workItem from="1618668336302" duration="12631000" />
       <workItem from="1618755719577" duration="16849000" />
       <workItem from="1618822206417" duration="17142000" />
-      <workItem from="1618896941740" duration="1880000" />
+      <workItem from="1618896941740" duration="11497000" />
     </task>
     <servers />
   </component>
@@ -90,22 +114,22 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1237" height="395" key="GridCell.Tab.0.bottom" timestamp="1618898828401">
+    <state width="1237" height="35" key="GridCell.Tab.0.bottom" timestamp="1618918193748">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="395" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1618898828401" />
-    <state width="1237" height="395" key="GridCell.Tab.0.center" timestamp="1618898828401">
+    <state width="1237" height="35" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1618918193748" />
+    <state width="1237" height="35" key="GridCell.Tab.0.center" timestamp="1618918193748">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="395" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1618898828401" />
-    <state width="1237" height="395" key="GridCell.Tab.0.left" timestamp="1618898828401">
+    <state width="1237" height="35" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1618918193748" />
+    <state width="1237" height="35" key="GridCell.Tab.0.left" timestamp="1618918193748">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="395" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1618898828401" />
-    <state width="1237" height="395" key="GridCell.Tab.0.right" timestamp="1618898828401">
+    <state width="1237" height="35" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1618918193748" />
+    <state width="1237" height="35" key="GridCell.Tab.0.right" timestamp="1618918193748">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="395" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1618898828401" />
+    <state width="1237" height="35" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1618918193748" />
     <state width="1237" height="204" key="GridCell.Tab.1.bottom" timestamp="1618775550049">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -124,6 +148,7 @@
     <state width="1237" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1618775550049" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Artificial_Intelligence_Project1$main.coverage" NAME="main Coverage Results" MODIFIED="1618898797171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Artificial_Intelligence_Project1$test3_txt.coverage" NAME="test3.txt Coverage Results" MODIFIED="1618916628268" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Artificial_Intelligence_Project1$main.coverage" NAME="main Coverage Results" MODIFIED="1618918193733" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
