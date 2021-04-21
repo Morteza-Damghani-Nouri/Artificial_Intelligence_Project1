@@ -98,7 +98,6 @@ def map_printer(input_array):
     print()
 
 
-
 # This function finds the first children node of the input array
 def first_children_finder(input_list):
     random_number = random.randint(0, (len(input_list) - 1))
@@ -197,7 +196,7 @@ def goal_children_finder(input_array, node, row, column):
 
 
 # This function is used to find the proper location of the robot to push the butter
-def ids_location_finder(input_array, row, column, start_location, local_goal_location, opened_nodes, generated_nodes):
+def ids_path_finder(input_array, row, column, start_location, local_goal_location, opened_nodes, generated_nodes):
     finished = False
     allowed_depth = 1
     current_depth = 0
@@ -459,7 +458,7 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                   column) and copy_input_array[butter_node.location.row][butter_node.location.column + 1] != "x":
                         local_goal_location = Location(butter_node.location.row, butter_node.location.column + 1)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -508,7 +507,7 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                   column) and copy_input_array[butter_node.location.row][butter_node.location.column - 1] != "x":
                         local_goal_location = Location(butter_node.location.row, butter_node.location.column - 1)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -556,7 +555,7 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                   column) and copy_input_array[butter_node.location.row + 1][butter_node.location.column] != "x":
                         local_goal_location = Location(butter_node.location.row + 1, butter_node.location.column)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -604,7 +603,7 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                   column) and copy_input_array[butter_node.location.row - 1][butter_node.location.column] != "x":
                         local_goal_location = Location(butter_node.location.row - 1, butter_node.location.column)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_location_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -706,9 +705,114 @@ def ids_algorithm(input_array, row, column, input_file_name):
     output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "IDS")
 
 
+# This function checks if expanded nodes from top and bottom are connected
+def is_connected(top_children_list, bottom_children_list):
+    for i in top_children_list:
+        for j in bottom_children_list:
+            if i.location.row == j.location.row and i.location.column == j.location.column:
+                return [True, i, j]
+    return [False, None, None]
+
+
+# This function is used to find the proper location of the robot to push the butter
+def bidirectional_bfs_path_finder(input_array, row, column, start_location, local_goal_location, opened_nodes, generated_nodes):
+    goal_found = False
+    current_depth = 0
+    cost = 0
+    generated_nodes += 1
+    opened_nodes += 1
+    top_current_node = Node(start_location)
+    cost += 1
+    opened_nodes += 1
+    generated_nodes += 1
+    top_current_node.content = input_array[start_location.row][start_location.column]
+    top_current_node.cost = cost_finder(top_current_node)
+    top_path = [top_current_node]
+
+    bottom_current_node = Node(local_goal_location)
+    cost += 1
+    opened_nodes += 1
+    generated_nodes += 1
+    bottom_current_node.content = input_array[local_goal_location.row][local_goal_location.column]
+    bottom_current_node.cost = cost_finder(bottom_current_node)
+    bottom_path = [bottom_current_node]
+
+    top_fringe_list = []
+    bottom_fringe_list = []
+    top_current_node.children = butter_children_finder(input_array, top_current_node, row, column)
+    for i in top_current_node.children:
+        top_fringe_list.append(i)
+    generated_nodes += len(top_current_node.children)
+    current_depth += 1
+    bottom_current_node.children = butter_children_finder(input_array, bottom_current_node, row, column)
+    for i in bottom_current_node.children:
+        bottom_fringe_list.append(i)
+    generated_nodes += len(bottom_current_node.children)
+    current_depth += 1
+
+    # Main part of the bidirectional BFS algorithm
+    while len(top_fringe_list) != 0 and len(bottom_fringe_list) != 0:
+        [is_connected_result, top_connected_node, bottom_connected_node] = is_connected(top_fringe_list, bottom_fringe_list)
+        if is_connected_result:
+            goal_found = True
+            cost += 2
+            top_path.append(top_connected_node)
+            bottom_path.append(bottom_connected_node)
+            break
+
+
+        else:
+            # Top part of the search graph
+            top_current_node = top_fringe_list[0]
+            opened_nodes += 1
+            cost += 1
+            top_path.append(top_current_node)
+            top_current_node.children = butter_children_finder(input_array, top_current_node, row, column)
+            for i in top_current_node.children:
+                top_fringe_list.append(i)
+            generated_nodes += len(top_current_node.children)
+            current_depth += 1
+
+
+            # Bottom part of the search graph
+            bottom_current_node = bottom_fringe_list[0]
+            opened_nodes += 1
+            cost += 1
+            bottom_path.append(bottom_current_node)
+            bottom_current_node.children = butter_children_finder(input_array, bottom_current_node, row, column)
+            for i in bottom_current_node.children:
+                bottom_fringe_list.append(i)
+            generated_nodes += len(bottom_current_node.children)
+            current_depth += 1
 
 
 
+
+    if goal_found:
+        path = []
+        for i in top_path:
+            path.append(i)
+        bottom_path.reverse()
+        for i in bottom_path:
+            path.append(i)
+
+        return[goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
+
+
+
+    else:
+        print("UNABLE TO FIND A PATH TO THE GOAL BY BIDIRECTIONAL BFS ALGORITHM")
+        return[goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
+
+
+# Bidirectional BFS algorithm is implemented here
+def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
+    start_time = time.perf_counter()
+    generated_nodes = 0
+    opened_nodes = 0
+    cost = 0
+    butter_finding_part_depth = 0
+    goal_finding_part_depth = 0
 
 
 
@@ -778,7 +882,7 @@ try:
 
     copy_input_array = array_copier(input_array, row, column)
     ids_algorithm(copy_input_array, row, column, input_file_name)
-
+    bidirectional_bfs_algorithm(copy_input_array, row, column, input_file_name)
 
 
 
