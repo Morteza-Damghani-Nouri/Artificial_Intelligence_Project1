@@ -4,6 +4,7 @@
     <list default="true" id="4a0df3a0-a147-4044-b7f5-45873af2e81a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test3.txt.py" beforeDir="false" afterPath="$PROJECT_DIR$/test3.txt.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +104,7 @@
       <workItem from="1618755719577" duration="16849000" />
       <workItem from="1618822206417" duration="17142000" />
       <workItem from="1618896941740" duration="28199000" />
-      <workItem from="1618982222045" duration="17614000" />
+      <workItem from="1618982222045" duration="19785000" />
     </task>
     <servers />
   </component>
@@ -114,22 +115,22 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1237" height="324" key="GridCell.Tab.0.bottom" timestamp="1619001410050">
+    <state width="1237" height="324" key="GridCell.Tab.0.bottom" timestamp="1619003588243">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="324" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1619001410050" />
-    <state width="1237" height="324" key="GridCell.Tab.0.center" timestamp="1619001410050">
+    <state width="1237" height="324" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1619003588243" />
+    <state width="1237" height="324" key="GridCell.Tab.0.center" timestamp="1619003588242">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="324" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1619001410050" />
-    <state width="1237" height="324" key="GridCell.Tab.0.left" timestamp="1619001410049">
+    <state width="1237" height="324" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1619003588242" />
+    <state width="1237" height="324" key="GridCell.Tab.0.left" timestamp="1619003588242">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="324" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1619001410049" />
-    <state width="1237" height="324" key="GridCell.Tab.0.right" timestamp="1619001410050">
+    <state width="1237" height="324" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1619003588242" />
+    <state width="1237" height="324" key="GridCell.Tab.0.right" timestamp="1619003588242">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="324" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1619001410050" />
+    <state width="1237" height="324" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1619003588242" />
     <state width="1237" height="204" key="GridCell.Tab.1.bottom" timestamp="1618775550049">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -149,6 +150,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Artificial_Intelligence_Project1$test3_txt.coverage" NAME="test3.txt Coverage Results" MODIFIED="1618916628268" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Artificial_Intelligence_Project1$main.coverage" NAME="main Coverage Results" MODIFIED="1619001410036" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Artificial_Intelligence_Project1$main.coverage" NAME="main Coverage Results" MODIFIED="1619003580171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
