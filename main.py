@@ -26,6 +26,7 @@ class Node:
     children = []
     content = ""
     cost = ""
+    heuristic_cost = ""
 
 
 # This function checks if the input location is available in input array or not
@@ -751,8 +752,6 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
     opened_nodes += 1
     top_current_node = Node(start_location)
     cost += 1
-    opened_nodes += 1
-    generated_nodes += 1
     top_current_node.content = input_array[start_location.row][start_location.column]
     top_current_node.cost = cost_finder(top_current_node)
     top_path = [top_current_node]
@@ -1187,10 +1186,133 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
     output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "Bidirectional_BFS")
 
 
+# This heuristic function is used in A* algorithm and it calculates manhattan distance as the heuristic function
+def heuristic_function(start_location, goal_location):
+    distance = 0
+    if start_location.row > goal_location.row:
+        distance += start_location.row - goal_location.row
+    else:
+        distance += goal_location.row - start_location.row
+    if start_location.column > goal_location.column:
+        distance += start_location.column - goal_location.column
+    else:
+        distance += goal_location.column - start_location.column
+
+    return distance
+
+
+# This function finds the child with the minimum cost and the function's output is used in A* algorithm
+def minimum_cost_child_finder(children):
+    minimum_cost_node = children[0]
+    i = 1
+    while i < len(children):
+        if children[i].cost < minimum_cost_node.cost:
+            minimum_cost_node = children[i]
+        i += 1
+    return minimum_cost_node
+
+
+# This function is used to find the proper location of the robot to push the butter by A* algorithm
+def a_star_path_finder(input_array, row, column, start_location, local_goal_location, opened_nodes, generated_nodes, main_goal_location):
+    goal_found = False
+    current_depth = 0
+    cost = 0
+    generated_nodes += 1
+    opened_nodes += 1
+    current_node = Node(start_location)
+    current_node.content = input_array[start_location.row][start_location.column]
+    current_node.cost = cost_finder(current_node)
+    current_node.heuristic_cost = heuristic_function(start_location, main_goal_location)
+    cost += current_node.cost
+    path = [current_node]
+
+
+    fringe_list = []
+    current_node.children = butter_children_finder(input_array, current_node, row, column)
+    for i in current_node.children:
+        fringe_list.append(i)
+    generated_nodes += len(current_node.children)
+    current_depth += 1
+    counter = 1
+    # Main part of the bidirectional BFS algorithm
+    while len(fringe_list) != 0 and counter <= 100000:
+        for i in current_node.children:
+            i.cost += heuristic_function(i.location, main_goal_location)
+
+        current_node = minimum_cost_child_finder(fringe_list)
+        path.append(current_node)
+        cost += current_node.cost
+        if current_node.location.row == main_goal_location.row and current_node.location.column == main_goal_location.column:
+            goal_found = True
+            break
+
+        opened_nodes += 1
+        current_node.children = butter_children_finder(input_array, current_node, row, column)
+        for i in current_node.children:
+            fringe_list.append(i)
+        generated_nodes += len(current_node.children)
+        current_depth += 1
+        counter += 1
+    if goal_found:
+        # By uncommenting these comments the bidirectional paths will print
+        # print("The path is: ")
+        # for i in path:
+        #    print(str(i.location.row) + ", " + str(i.location.column))
+        return [not goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
+    else:
+        print("UNABLE TO FIND A PATH TO THE GOAL BY BIDIRECTIONAL BFS ALGORITHM")
+        return[not goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
+
+
+# A* algorithm is implemented here
+def a_star_algorithm(input_array, row, column, input_file_name):
+    start_time = time.perf_counter()
+    generated_nodes = 0
+    opened_nodes = 0
+    cost = 0
+    butter_finding_part_depth = 0
+    goal_finding_part_depth = 0
+    butter_count = butter_counter(input_array)
+    main_counter = 1
+    while main_counter <= butter_count:
+        path = []
+        i = 0
+        j = 0
+        while i < row:
+            while j < column:
+                if input_array[i][j].find("b") != -1:
+                    butter_location = Location(i, j)
+                    break
+            i += 1
+
+        [butter_finding_result, robot_to_butter_path, opened_nodes, generated_nodes, butter_finding_part_depth,
+         cost] = a_star_path_finder(input_array, row, column,
+                                               robot_location_finder(input_array, row, column),
+                                               butter_location_finder(input_array, row, column), opened_nodes,
+                                               generated_nodes, butter_location)
+        if not butter_finding_result:
+            print("The butter path is: ")
+            for i in robot_to_butter_path:
+                print(str(i.location.row) + ", " + str(i.location.column))
+
+        else:
+            return 0
+        main_counter += 1
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Main part of the project starts here
-
 try:
     input_file_name = input("Enter the name of the input file: ")
     input_file = open("Inputs/" + input_file_name, "rt")
@@ -1262,7 +1384,7 @@ try:
         bidirectional_bfs_algorithm(copy_input_array, row, column, input_file_name)
 
     if algorithm_type == "3":
-        pass
+        a_star_algorithm(copy_input_array, row, column, input_file_name)
 
 
     input_file.close()
