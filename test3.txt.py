@@ -23,7 +23,7 @@ def a_star_algorithm(input_array, row, column, input_file_name):
          cost] = a_star_path_finder(input_array, row, column,
                                                robot_location_finder(input_array, row, column),
                                                butter_location_finder(input_array, row, column), opened_nodes,
-                                               generated_nodes, butter_location)
+                                               generated_nodes)
         if not butter_finding_result:
             print("The butter path is: ")
             for i in robot_to_butter_path:
