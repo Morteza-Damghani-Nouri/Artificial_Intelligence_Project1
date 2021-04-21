@@ -115,7 +115,7 @@ def map_printer(input_array):
 
 
 # This function finds the first children node of the input array
-def first_children_finder(input_list):
+def first_child_finder(input_list):
     random_number = random.randint(0, (len(input_list) - 1))
     return [input_list[random_number], random_number]
 
@@ -236,7 +236,7 @@ def ids_path_finder(input_array, row, column, start_location, local_goal_locatio
                 is_local_goal_available_result = is_local_goal_available(current_node.children, local_goal_location)
                 generated_nodes += len(current_node.children)
                 if is_local_goal_available_result == False:
-                    [next_node, index] = first_children_finder(current_node.children)
+                    [next_node, index] = first_child_finder(current_node.children)
                     current_node.children.pop(index)
                     current_node = next_node
                     path.append(current_node)
@@ -385,7 +385,7 @@ def ids_algorithm(input_array, row, column, input_file_name):
                     is_butter_available_result = is_butter_available(current_node.children)
                     generated_nodes += len(current_node.children)
                     if is_butter_available_result == False:
-                        [next_node, index] = first_children_finder(current_node.children)
+                        [next_node, index] = first_child_finder(current_node.children)
                         current_node.children.pop(index)
                         current_node = next_node
                         path.append(current_node)
@@ -462,12 +462,12 @@ def ids_algorithm(input_array, row, column, input_file_name):
         first_butter_node = butter_node
         butter_path = [butter_node.location]
         butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
-
+        print("The path from butter location to the goal: ")
         counter = 1
         while True:
             # A number is chose for infinite loop handling
-            if len(butter_node.children) != 0 and counter <= 10000000:
-                [next_node, index] = first_children_finder(butter_node.children)
+            if len(butter_node.children) != 0 and counter <= 100000:
+                [next_node, index] = first_child_finder(butter_node.children)
 
                 if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column - 1:
                     if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column + 1, row,
@@ -708,12 +708,11 @@ def ids_algorithm(input_array, row, column, input_file_name):
                 print(str(i.row) + ", " + str(i.column))
 
             print("=================")
-            print("The input array is: ")
             input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
             input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
-            map_printer(input_array)
+
 
 
     # This part of the code stops the timer
@@ -734,11 +733,6 @@ def is_connected(top_children_list, bottom_children_list):
 def bidirectional_bfs_thread_part(children, fringe_list):
     for i in children:
         fringe_list.append(i)
-
-
-
-
-
 
 
 # This function is used to find the proper location of the robot to push the butter
@@ -833,10 +827,6 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
             generated_nodes += len(top_current_node.children)
             generated_nodes += len(bottom_current_node.children)
 
-
-
-
-
     if goal_found:
         path = []
         top_path.pop(-1)
@@ -846,16 +836,8 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
         for i in bottom_path:
             path.append(i)
 
-        # print("The top path is: ")
-        # for i in top_path:
-        #     print(str(i.location.row) + ", " + str(i.location.column))
 
-        # print("The bottom path is: ")
-        # for i in bottom_path:
-        #     print(str(i.location.row) + ", " + str(i.location.column))
-
-
-        return[goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
+        return[not goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
 
 
 
@@ -873,303 +855,313 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
     butter_finding_part_depth = 0
     goal_finding_part_depth = 0
     path = []
-
-
-    [butter_finding_result, robot_to_butter_path, opened_nodes, generated_nodes, butter_finding_part_depth, cost] = bidirectional_bfs_path_finder(input_array, row, column, robot_location_finder(input_array, row, column), butter_location_finder(input_array, row, column), opened_nodes, generated_nodes)
-    if butter_finding_result:
-        print("BUTTER FOUND")
-        print("The butter path is: ")
-        for i in robot_to_butter_path:
-            print(str(i.location.row) + ", " + str(i.location.column))
-
-    else:
-        return 0
-
-
-
-    first_robot_location = robot_to_butter_path[0].location
-    copy_input_array = array_copier(input_array, row, column)
-    robot_location = robot_to_butter_path[-2].location
-    goal_finished = False
-
-    first_butter_node = robot_to_butter_path[-1]
-    butter_node = robot_to_butter_path[-1]
-    butter_path = [robot_to_butter_path[-1].location]
-    robot_to_butter_path.pop(-1)
-    butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
-    for i in robot_to_butter_path:
-        path.append(i)
-
-
-    # Here the whileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    counter = 1
-    while True:
-        # A number is chose for infinite loop handling
-        if len(butter_node.children) != 0 and counter <= 10000000:
-            next_node = butter_node.children[0]
-
-            if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column - 1:
-                if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column + 1, row,
-                              column) and copy_input_array[butter_node.location.row][
-                    butter_node.location.column + 1] != "x":
-                    local_goal_location = Location(butter_node.location.row, butter_node.location.column + 1)
-                    if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                        [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
-                         output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
-                                                                      local_goal_location, opened_nodes,
-                                                                      generated_nodes)
-                        goal_finding_part_depth += output_depth
-                        cost += output_cost
-                    else:
-                        failure_result = False
-                        local_path = []
-
-                    if not failure_result:
-                        for k in local_path:
-                            path.append(k)
-                        for m in local_path:
-                            map_array = x_locator(input_array, row, column)
-                            map_array[m.location.row][m.location.column] = "r"
-                            map_array[butter_node.location.row][butter_node.location.column] = "b"
-                            map_printer(map_array)
-
-                    if failure_result:
-                        butter_node.children.pop(0)
-
-                    else:
-                        robot_location = butter_node.location
-                        path.append(Node(robot_location))
-                        butter_path.append(next_node.location)
-                        if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
-                            goal_finished = True
-                            break
-                        copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
-                        if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
-                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
-                        # copy_input_array[next_node.location.row][next_node.location.column] = "x"
-                        butter_node = Node(Location(next_node.location.row, next_node.location.column))
-
-                        map_array = x_locator(input_array, row, column)
-                        map_array[robot_location.row][robot_location.column] = "r"
-                        map_array[butter_node.location.row][butter_node.location.column] = "b"
-                        map_printer(map_array)
-                        butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
-
-                else:
-                    butter_node.children.pop(0)
-
-            if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column + 1:
-
-                if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column - 1, row,
-                              column) and copy_input_array[butter_node.location.row][
-                    butter_node.location.column - 1] != "x":
-                    local_goal_location = Location(butter_node.location.row, butter_node.location.column - 1)
-                    if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                        [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
-                         output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
-                                                                      local_goal_location, opened_nodes,
-                                                                      generated_nodes)
-                        goal_finding_part_depth += output_depth
-                        cost += output_cost
-                    else:
-                        failure_result = False
-                        local_path = []
-
-                    if not failure_result:
-                        for k in local_path:
-                            path.append(k)
-
-                        for m in local_path:
-                            map_array = x_locator(input_array, row, column)
-                            map_array[m.location.row][m.location.column] = "r"
-                            map_array[butter_node.location.row][butter_node.location.column] = "b"
-                            map_printer(map_array)
-
-                    if failure_result:
-                        butter_node.children.pop(0)
-
-                    else:
-                        robot_location = butter_node.location
-                        path.append(Node(robot_location))
-                        butter_path.append(next_node.location)
-                        if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
-                            goal_finished = True
-                            break
-                        copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
-                        if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
-                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
-                        # copy_input_array[next_node.location.row][next_node.location.column] = "x"
-                        butter_node = Node(Location(next_node.location.row, next_node.location.column))
-
-                        map_array = x_locator(input_array, row, column)
-                        map_array[robot_location.row][robot_location.column] = "r"
-                        map_array[butter_node.location.row][butter_node.location.column] = "b"
-                        map_printer(map_array)
-                        butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
-                else:
-                    butter_node.children.pop(0)
-
-            if next_node.location.row == butter_node.location.row - 1 and next_node.location.column == butter_node.location.column:
-                if does_exist(copy_input_array, butter_node.location.row + 1, butter_node.location.column, row,
-                              column) and copy_input_array[butter_node.location.row + 1][
-                    butter_node.location.column] != "x":
-                    local_goal_location = Location(butter_node.location.row + 1, butter_node.location.column)
-                    if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                        [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
-                         output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
-                                                                      local_goal_location, opened_nodes,
-                                                                      generated_nodes)
-                        goal_finding_part_depth += output_depth
-                        cost += output_cost
-                    else:
-                        failure_result = False
-                        local_path = []
-
-                    if not failure_result:
-                        for k in local_path:
-                            path.append(k)
-
-                        for m in local_path:
-                            map_array = x_locator(input_array, row, column)
-                            map_array[m.location.row][m.location.column] = "r"
-                            map_array[butter_node.location.row][butter_node.location.column] = "b"
-                            map_printer(map_array)
-
-                    if failure_result:
-                        butter_node.children.pop(0)
-
-                    else:
-                        robot_location = butter_node.location
-                        path.append(Node(robot_location))
-                        butter_path.append(next_node.location)
-                        if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
-                            goal_finished = True
-                            break
-                        copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
-                        if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
-                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
-                        # copy_input_array[next_node.location.row][next_node.location.column] = "x"
-                        butter_node = Node(Location(next_node.location.row, next_node.location.column))
-
-                        map_array = x_locator(input_array, row, column)
-                        map_array[robot_location.row][robot_location.column] = "r"
-                        map_array[butter_node.location.row][butter_node.location.column] = "b"
-                        map_printer(map_array)
-                        butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
-                else:
-                    butter_node.children.pop(0)
-
-            if next_node.location.row == butter_node.location.row + 1 and next_node.location.column == butter_node.location.column:
-                if does_exist(copy_input_array, butter_node.location.row - 1, butter_node.location.column, row,
-                              column) and copy_input_array[butter_node.location.row - 1][
-                    butter_node.location.column] != "x":
-                    local_goal_location = Location(butter_node.location.row - 1, butter_node.location.column)
-                    if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                        [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
-                         output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
-                                                                      local_goal_location, opened_nodes,
-                                                                      generated_nodes)
-                        goal_finding_part_depth += output_depth
-                        cost += output_cost
-                    else:
-                        failure_result = False
-                        local_path = []
-
-                    if not failure_result:
-                        for k in local_path:
-                            path.append(k)
-                        for m in local_path:
-                            map_array = x_locator(input_array, row, column)
-                            map_array[m.location.row][m.location.column] = "r"
-                            map_array[butter_node.location.row][butter_node.location.column] = "b"
-                            map_printer(map_array)
-
-                    if failure_result:
-                        butter_node.children.pop(0)
-
-                    else:
-                        robot_location = butter_node.location
-                        path.append(Node(robot_location))
-                        butter_path.append(next_node.location)
-                        if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
-                            goal_finished = True
-                            break
-                        copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
-                        if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
-                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
-                        # copy_input_array[next_node.location.row][next_node.location.column] = "x"
-                        butter_node = Node(Location(next_node.location.row, next_node.location.column))
-
-                        map_array = x_locator(input_array, row, column)
-                        map_array[robot_location.row][robot_location.column] = "r"
-                        map_array[butter_node.location.row][butter_node.location.column] = "b"
-                        map_printer(map_array)
-                        butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
-
-                else:
-                    butter_node.children.pop(0)
-
+    while does_butter_exist(input_array):
+        [butter_finding_result, robot_to_butter_path, opened_nodes, generated_nodes, butter_finding_part_depth,
+         cost] = bidirectional_bfs_path_finder(input_array, row, column,
+                                               robot_location_finder(input_array, row, column),
+                                               butter_location_finder(input_array, row, column), opened_nodes,
+                                               generated_nodes)
+        if not butter_finding_result:
+            print("The butter path is: ")
+            for i in robot_to_butter_path:
+                print(str(i.location.row) + ", " + str(i.location.column))
 
         else:
-            if (butter_node.location.row == 0 and butter_node.location.column == 0) or (
-                    butter_node.location.row == 0 and butter_node.location.column == column - 1) or (
-                    butter_node.location.row == row - 1 and butter_node.location.column == 0) or (
-                    butter_node.location.row == row - 1 and butter_node.location.column == column - 1):
-                robot_location = butter_node.location
-                path.append(Node(robot_location))
-                butter_path.append(next_node.location)
-                if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
-                    goal_finished = True
-                    break
-                copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                    input_array[butter_node.location.row][butter_node.location.column]
-                if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
-                    copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                        copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
-                # copy_input_array[next_node.location.row][next_node.location.column] = "x"
-                butter_node = Node(Location(next_node.location.row, next_node.location.column))
+            return 0
 
-                map_array = x_locator(input_array, row, column)
-                map_array[robot_location.row][robot_location.column] = "r"
-                map_array[butter_node.location.row][butter_node.location.column] = "b"
-                map_printer(map_array)
-                butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
-            else:
-                print("FAILURE")
-                break
-        counter += 1
-    if goal_finished:
-        map_array = x_locator(input_array, row, column)
-        map_array[robot_location.row][robot_location.column] = "r"
-        map_array[butter_path[-1].row][butter_path[-1].column] = "b"
-        map_printer(map_array)
-        print("GOAL FOUND")
-        print("=================")
-        print("The robot path: ")
+        first_robot_location = robot_to_butter_path[0].location
+        copy_input_array = array_copier(input_array, row, column)
+        robot_location = robot_to_butter_path[-2].location
+        goal_finished = False
+
+        first_butter_node = robot_to_butter_path[-1]
+        butter_node = robot_to_butter_path[-1]
+        butter_path = [robot_to_butter_path[-1].location]
+        robot_to_butter_path.pop(-1)
+        butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
+        for i in robot_to_butter_path:
+            path.append(i)
+
+        print("The path from robot location to the butter: ")
         for i in path:
-            print(str(i.location.row) + ", " + str(i.location.column))
+            map_array = x_locator(input_array, row, column)
+            map_array[i.location.row][i.location.column] = "r"
+            map_array[butter_node.location.row][butter_node.location.column] = "b"
+            map_printer(map_array)
 
-        print("=================")
-        print("The butter path: ")
-        for i in butter_path:
-            print(str(i.row) + ", " + str(i.column))
+        print("BUTTER FOUND")
 
-        print("=================")
-        print("The input array is: ")
-        input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
-        input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][
-            first_robot_location.column].rstrip("r")
-        input_array[butter_path[-1].row][butter_path[-1].column] = "x"
-        input_array[robot_location.row][robot_location.column] += "r"
-        map_printer(input_array)
+        print("The path from butter location to the goal: ")
+        counter = 1
+        while True:
+            # A number is chose for infinite loop handling
+            if len(butter_node.children) != 0 and counter <= 100000:
+                [next_node, index] = first_child_finder(butter_node.children)
+                if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column - 1:
+                    if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column + 1, row,
+                                  column) and copy_input_array[butter_node.location.row][
+                        butter_node.location.column + 1] != "x":
+                        local_goal_location = Location(butter_node.location.row, butter_node.location.column + 1)
+                        if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
+                                                                          local_goal_location, opened_nodes,
+                                                                          generated_nodes)
+                            goal_finding_part_depth += output_depth
+                            cost += output_cost
+                        else:
+                            failure_result = False
+                            local_path = []
+
+                        if not failure_result:
+                            for k in local_path:
+                                path.append(k)
+                            for m in local_path:
+                                map_array = x_locator(input_array, row, column)
+                                map_array[m.location.row][m.location.column] = "r"
+                                map_array[butter_node.location.row][butter_node.location.column] = "b"
+                                map_printer(map_array)
+
+                        if failure_result:
+                            butter_node.children.pop(index)
+
+                        else:
+                            robot_location = butter_node.location
+                            path.append(Node(robot_location))
+                            butter_path.append(next_node.location)
+                            if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
+                                goal_finished = True
+                                break
+                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                input_array[butter_node.location.row][butter_node.location.column]
+                            if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
+                                copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                            # copy_input_array[next_node.location.row][next_node.location.column] = "x"
+                            butter_node = Node(Location(next_node.location.row, next_node.location.column))
+
+                            map_array = x_locator(input_array, row, column)
+                            map_array[robot_location.row][robot_location.column] = "r"
+                            map_array[butter_node.location.row][butter_node.location.column] = "b"
+                            map_printer(map_array)
+                            butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
+
+                    else:
+                        butter_node.children.pop(index)
+
+                if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column + 1:
+
+                    if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column - 1, row,
+                                  column) and copy_input_array[butter_node.location.row][
+                        butter_node.location.column - 1] != "x":
+                        local_goal_location = Location(butter_node.location.row, butter_node.location.column - 1)
+                        if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
+                                                                          local_goal_location, opened_nodes,
+                                                                          generated_nodes)
+
+                            goal_finding_part_depth += output_depth
+                            cost += output_cost
+                        else:
+                            failure_result = False
+                            local_path = []
+
+                        if not failure_result:
+                            for k in local_path:
+                                path.append(k)
+
+                            for m in local_path:
+                                map_array = x_locator(input_array, row, column)
+                                map_array[m.location.row][m.location.column] = "r"
+                                map_array[butter_node.location.row][butter_node.location.column] = "b"
+                                map_printer(map_array)
+
+                        if failure_result:
+                            butter_node.children.pop(index)
+
+                        else:
+                            robot_location = butter_node.location
+                            path.append(Node(robot_location))
+                            butter_path.append(next_node.location)
+                            if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
+                                goal_finished = True
+                                break
+                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                input_array[butter_node.location.row][butter_node.location.column]
+                            if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
+                                copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                            # copy_input_array[next_node.location.row][next_node.location.column] = "x"
+                            butter_node = Node(Location(next_node.location.row, next_node.location.column))
+
+                            map_array = x_locator(input_array, row, column)
+                            map_array[robot_location.row][robot_location.column] = "r"
+                            map_array[butter_node.location.row][butter_node.location.column] = "b"
+                            map_printer(map_array)
+                            butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
+                    else:
+                        butter_node.children.pop(index)
+
+                if next_node.location.row == butter_node.location.row - 1 and next_node.location.column == butter_node.location.column:
+                    if does_exist(copy_input_array, butter_node.location.row + 1, butter_node.location.column, row,
+                                  column) and copy_input_array[butter_node.location.row + 1][
+                        butter_node.location.column] != "x":
+                        local_goal_location = Location(butter_node.location.row + 1, butter_node.location.column)
+                        if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
+                                                                          local_goal_location, opened_nodes,
+                                                                          generated_nodes)
+                            goal_finding_part_depth += output_depth
+                            cost += output_cost
+                        else:
+                            failure_result = False
+                            local_path = []
+
+                        if not failure_result:
+                            for k in local_path:
+                                path.append(k)
+
+                            for m in local_path:
+                                map_array = x_locator(input_array, row, column)
+                                map_array[m.location.row][m.location.column] = "r"
+                                map_array[butter_node.location.row][butter_node.location.column] = "b"
+                                map_printer(map_array)
+
+                        if failure_result:
+                            butter_node.children.pop(index)
+
+                        else:
+                            robot_location = butter_node.location
+                            path.append(Node(robot_location))
+                            butter_path.append(next_node.location)
+                            if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
+                                goal_finished = True
+                                break
+                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                input_array[butter_node.location.row][butter_node.location.column]
+                            if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
+                                copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                            # copy_input_array[next_node.location.row][next_node.location.column] = "x"
+                            butter_node = Node(Location(next_node.location.row, next_node.location.column))
+
+                            map_array = x_locator(input_array, row, column)
+                            map_array[robot_location.row][robot_location.column] = "r"
+                            map_array[butter_node.location.row][butter_node.location.column] = "b"
+                            map_printer(map_array)
+                            butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
+                    else:
+                        butter_node.children.pop(index)
+
+                if next_node.location.row == butter_node.location.row + 1 and next_node.location.column == butter_node.location.column:
+                    if does_exist(copy_input_array, butter_node.location.row - 1, butter_node.location.column, row,
+                                  column) and copy_input_array[butter_node.location.row - 1][
+                        butter_node.location.column] != "x":
+                        local_goal_location = Location(butter_node.location.row - 1, butter_node.location.column)
+                        if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = bidirectional_bfs_path_finder(copy_input_array, row, column, robot_location,
+                                                                          local_goal_location, opened_nodes,
+                                                                          generated_nodes)
+                            goal_finding_part_depth += output_depth
+                            cost += output_cost
+                        else:
+                            failure_result = False
+                            local_path = []
+
+                        if not failure_result:
+                            for k in local_path:
+                                path.append(k)
+                            for m in local_path:
+                                map_array = x_locator(input_array, row, column)
+                                map_array[m.location.row][m.location.column] = "r"
+                                map_array[butter_node.location.row][butter_node.location.column] = "b"
+                                map_printer(map_array)
+
+                        if failure_result:
+                            butter_node.children.pop(index)
+
+                        else:
+                            robot_location = butter_node.location
+                            path.append(Node(robot_location))
+                            butter_path.append(next_node.location)
+                            if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
+                                goal_finished = True
+                                break
+                            copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                input_array[butter_node.location.row][butter_node.location.column]
+                            if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
+                                copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                            # copy_input_array[next_node.location.row][next_node.location.column] = "x"
+                            butter_node = Node(Location(next_node.location.row, next_node.location.column))
+
+                            map_array = x_locator(input_array, row, column)
+                            map_array[robot_location.row][robot_location.column] = "r"
+                            map_array[butter_node.location.row][butter_node.location.column] = "b"
+                            map_printer(map_array)
+                            butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
+
+                    else:
+                        butter_node.children.pop(index)
+
+
+            else:
+                if (butter_node.location.row == 0 and butter_node.location.column == 0) or (
+                        butter_node.location.row == 0 and butter_node.location.column == column - 1) or (
+                        butter_node.location.row == row - 1 and butter_node.location.column == 0) or (
+                        butter_node.location.row == row - 1 and butter_node.location.column == column - 1):
+                    robot_location = butter_node.location
+                    path.append(Node(robot_location))
+                    butter_path.append(next_node.location)
+                    if input_array[next_node.location.row][next_node.location.column].find('p') != -1:
+                        goal_finished = True
+                        break
+                    copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                        input_array[butter_node.location.row][butter_node.location.column]
+                    if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
+                        copy_input_array[butter_node.location.row][butter_node.location.column] = \
+                            copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                    # copy_input_array[next_node.location.row][next_node.location.column] = "x"
+                    butter_node = Node(Location(next_node.location.row, next_node.location.column))
+
+                    map_array = x_locator(input_array, row, column)
+                    map_array[robot_location.row][robot_location.column] = "r"
+                    map_array[butter_node.location.row][butter_node.location.column] = "b"
+                    map_printer(map_array)
+                    butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
+                else:
+                    print("FAILURE")
+                    break
+            counter += 1
+        if goal_finished:
+            map_array = x_locator(input_array, row, column)
+            map_array[robot_location.row][robot_location.column] = "r"
+            map_array[butter_path[-1].row][butter_path[-1].column] = "b"
+            map_printer(map_array)
+            print("GOAL FOUND")
+            print("=================")
+            print("The robot path: ")
+            for i in path:
+                print(str(i.location.row) + ", " + str(i.location.column))
+
+            print("=================")
+            print("The butter path: ")
+            for i in butter_path:
+                print(str(i.row) + ", " + str(i.column))
+            print("=================")
+            input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
+            input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][
+                first_robot_location.column].rstrip("r")
+            input_array[butter_path[-1].row][butter_path[-1].column] = "x"
+            input_array[robot_location.row][robot_location.column] += "r"
+
+    finish_time = time.perf_counter()
+    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "Bidirectional_BFS")
+
+
 
 
 # Main part of the project starts here
