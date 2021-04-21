@@ -1,6 +1,6 @@
 import random
 import time
-
+import threading
 
 # This class determines the location of nodes
 class Location:
@@ -43,6 +43,22 @@ def robot_location_finder(input_array, row, column):
         while j < column:
 
             if input_array[i][j].find("r") != -1:
+                robot_location = Location(i, j)
+                return robot_location
+
+            j += 1
+
+        i += 1
+
+
+# This function finds the robot location
+def butter_location_finder(input_array, row, column):
+    i = 0
+    while i < row:
+        j = 0
+        while j < column:
+
+            if input_array[i][j].find("b") != -1:
                 robot_location = Location(i, j)
                 return robot_location
 
@@ -714,6 +730,17 @@ def is_connected(top_children_list, bottom_children_list):
     return [False, None, None]
 
 
+# This is the target function which is executed by threads in bidirectional BFS algorithm
+def bidirectional_bfs_thread_part(children, fringe_list):
+    for i in children:
+        fringe_list.append(i)
+
+
+
+
+
+
+
 # This function is used to find the proper location of the robot to push the butter
 def bidirectional_bfs_path_finder(input_array, row, column, start_location, local_goal_location, opened_nodes, generated_nodes):
     goal_found = False
@@ -752,38 +779,60 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
 
     # Main part of the bidirectional BFS algorithm
     while len(top_fringe_list) != 0 and len(bottom_fringe_list) != 0:
+
         [is_connected_result, top_connected_node, bottom_connected_node] = is_connected(top_fringe_list, bottom_fringe_list)
+
         if is_connected_result:
             goal_found = True
             cost += 2
-            top_path.append(top_connected_node)
-            bottom_path.append(bottom_connected_node)
+            current_temp_node = top_connected_node
+            temp_path = [current_temp_node]
+            while current_temp_node.parent != top_path[0]:
+                temp_path.append(current_temp_node.parent)
+                current_temp_node = current_temp_node.parent
+            temp_path.reverse()
+            for i in temp_path:
+                top_path.append(i)
+            current_temp_node = bottom_connected_node
+            temp_path = [current_temp_node]
+            while current_temp_node.parent != bottom_path[0]:
+                temp_path.append(current_temp_node.parent)
+                current_temp_node = current_temp_node.parent
+            temp_path.reverse()
+            for i in temp_path:
+                bottom_path.append(i)
             break
+
 
 
         else:
             # Top part of the search graph
             top_current_node = top_fringe_list[0]
-            opened_nodes += 1
-            cost += 1
-            top_path.append(top_current_node)
+            top_fringe_list.pop(0)
+            opened_nodes += 2
+            cost += 2
             top_current_node.children = butter_children_finder(input_array, top_current_node, row, column)
             for i in top_current_node.children:
                 top_fringe_list.append(i)
-            generated_nodes += len(top_current_node.children)
-            current_depth += 1
+            current_depth += 2
 
 
             # Bottom part of the search graph
             bottom_current_node = bottom_fringe_list[0]
-            opened_nodes += 1
-            cost += 1
-            bottom_path.append(bottom_current_node)
+            bottom_fringe_list.pop(0)
             bottom_current_node.children = butter_children_finder(input_array, bottom_current_node, row, column)
-            for i in bottom_current_node.children:
-                bottom_fringe_list.append(i)
+
+            # The main part of the bidirectional BFS is executed by separated threads
+            top_path_process = threading.Thread(target=bidirectional_bfs_thread_part, args=(top_current_node.children, top_fringe_list))
+            bottom_path_process = threading.Thread(target=bidirectional_bfs_thread_part, args=(bottom_current_node.children, bottom_fringe_list))
+            top_path_process.start()
+            bottom_path_process.start()
+            while bottom_path_process.is_alive() or top_path_process.is_alive():
+                print("Threads are executing...")
+
+            generated_nodes += len(top_current_node.children)
             generated_nodes += len(bottom_current_node.children)
-            current_depth += 1
+
 
 
 
@@ -795,6 +844,23 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
         bottom_path.reverse()
         for i in bottom_path:
             path.append(i)
+
+        print("The top path is: ")
+        for i in top_path:
+            print(str(i.location.row) + ", " + str(i.location.column))
+
+        print("The bottom path is: ")
+        for i in bottom_path:
+            print(str(i.location.row) + ", " + str(i.location.column))
+
+
+
+
+
+
+
+
+
 
         return[goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
 
@@ -815,8 +881,17 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
     goal_finding_part_depth = 0
 
 
+    [butter_finding_result, butter_path, opened_nodes, generated_nodes, butter_finding_part_depth, cost] = bidirectional_bfs_path_finder(input_array, row, column, robot_location_finder(input_array, row, column), butter_location_finder(input_array, row, column), opened_nodes, generated_nodes)
+    if butter_finding_result:
+        print("The butter path is: ")
+        for i in butter_path:
+            print(str(i.location.row) + ", " + str(i.location.column))
 
 
+
+
+    else:
+        return 0
 
 
 
@@ -825,8 +900,9 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
 
 
 # Main part of the project starts here
-input_file_name = input("Enter the name of the input file: ")
+
 try:
+    input_file_name = input("Enter the name of the input file: ")
     input_file = open("Inputs/" + input_file_name, "rt")
     row = ""
     while True:
@@ -845,7 +921,6 @@ try:
         column += char
 
     column = int(column)
-
 
     input_array = []
     temp_row = []
@@ -876,23 +951,56 @@ try:
             input_array.append(temp_row)
             break
 
-
-
-
+    algorithm_type = ""
+    while True:
+        print("Enter the number of one of the following choices: ")
+        print("1) IDS")
+        print("2) Bidirectional BFS")
+        print("3) A*")
+        print("4) Exit")
+        algorithm_type = input()
+        if algorithm_type == "1" or algorithm_type == "2" or algorithm_type == "3" or algorithm_type == "4":
+            break
+        else:
+            print("Wrong input")
 
     copy_input_array = array_copier(input_array, row, column)
-    ids_algorithm(copy_input_array, row, column, input_file_name)
-    bidirectional_bfs_algorithm(copy_input_array, row, column, input_file_name)
+    if algorithm_type == "1":
+        ids_algorithm(copy_input_array, row, column, input_file_name)
 
+    if algorithm_type == "2":
+        bidirectional_bfs_algorithm(copy_input_array, row, column, input_file_name)
 
-
-
-
-
-
+    if algorithm_type == "3":
+        pass
 
 
     input_file.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 except (FileExistsError, FileNotFoundError) as e:
     print("This file does not exist in the Inputs folder")
 
