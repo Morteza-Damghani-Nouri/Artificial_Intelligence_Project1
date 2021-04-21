@@ -339,12 +339,13 @@ def array_copier(input_array, row, column):
 
 
 # This function checks if a butter is available in the input array
-def does_butter_exist(input_array):
+def butter_counter(input_array):
+    counter = 0
     for i in input_array:
         for j in i:
             if j.find("b") != -1:
-                return True
-    return False
+                counter += 1
+    return counter
 
 
 # This function generates the output file and stores it in Outputs folder
@@ -363,7 +364,9 @@ def ids_algorithm(input_array, row, column, input_file_name):
     cost = 0
     butter_finding_part_depth = 0
     goal_finding_part_depth = 0
-    while does_butter_exist(input_array):
+    butter_count = butter_counter(input_array)
+    main_counter = 1
+    while main_counter <= butter_count:
         robot_location = robot_location_finder(input_array, row, column)
         finished = False
         allowed_depth = 1
@@ -688,6 +691,10 @@ def ids_algorithm(input_array, row, column, input_file_name):
                     map_printer(map_array)
                     butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
                 else:
+                    map_array = x_locator(input_array, row, column)
+                    map_array[robot_location.row][robot_location.column] = "r"
+                    map_array[butter_node.location.row][butter_node.location.column] = "b"
+                    map_printer(map_array)
                     print("FAILURE")
                     break
             counter += 1
@@ -712,7 +719,7 @@ def ids_algorithm(input_array, row, column, input_file_name):
             input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
-
+        main_counter += 1
 
 
     # This part of the code stops the timer
@@ -837,13 +844,24 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
             path.append(i)
 
 
+        # By uncommenting these comments the bidirectional paths will print
+        # print("The top path is: ")
+        # for i in top_path:
+        #     print(str(i.location.row) + ", " + str(i.location.column))
+
+
+        # print("The bottom path is: ")
+        # for i in bottom_path:
+        #     print(str(i.location.row) + ", " + str(i.location.column))
+
+
         return[not goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
 
 
 
     else:
         print("UNABLE TO FIND A PATH TO THE GOAL BY BIDIRECTIONAL BFS ALGORITHM")
-        return[goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
+        return[not goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
 
 
 # Bidirectional BFS algorithm is implemented here
@@ -854,8 +872,10 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
     cost = 0
     butter_finding_part_depth = 0
     goal_finding_part_depth = 0
-    path = []
-    while does_butter_exist(input_array):
+    butter_count = butter_counter(input_array)
+    main_counter = 1
+    while main_counter <= butter_count:
+        path = []
         [butter_finding_result, robot_to_butter_path, opened_nodes, generated_nodes, butter_finding_part_depth,
          cost] = bidirectional_bfs_path_finder(input_array, row, column,
                                                robot_location_finder(input_array, row, column),
@@ -1133,6 +1153,10 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
                     map_printer(map_array)
                     butter_node.children = goal_children_finder(copy_input_array, butter_node, row, column)
                 else:
+                    map_array = x_locator(input_array, row, column)
+                    map_array[robot_location.row][robot_location.column] = "r"
+                    map_array[butter_node.location.row][butter_node.location.column] = "b"
+                    map_printer(map_array)
                     print("FAILURE")
                     break
             counter += 1
@@ -1153,10 +1177,11 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
                 print(str(i.row) + ", " + str(i.column))
             print("=================")
             input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
-            input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][
-                first_robot_location.column].rstrip("r")
+            input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
+
+        main_counter += 1
 
     finish_time = time.perf_counter()
     output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "Bidirectional_BFS")
