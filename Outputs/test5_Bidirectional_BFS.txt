@@ -1,0 +1,43 @@
+RESULT: All of the goals found by Bidirectional_BFS algorithm
+Opened nodes count: 14
+Generated nodes count: 52
+Total cost: 26
+Time: 0.00926709999999975
+Path: DULDURULLLRRLLRRLLRRRLLLD
+
+GOAL 1 RESULTS: 
+Main result: GOAL FOUND
+Robot path: 
+(1, 3)
+(2, 3)
+(1, 3)
+(1, 3)
+(1, 2)
+(2, 2)
+(1, 2)
+(1, 2)
+(1, 3)
+(0, 3)
+(0, 2)
+(0, 1)
+(0, 0)
+(0, 0)
+(0, 1)
+(0, 2)
+(0, 1)
+(0, 0)
+(0, 0)
+(0, 1)
+(0, 2)
+(0, 1)
+(0, 0)
+(0, 1)
+(0, 1)
+(0, 2)
+(0, 3)
+(0, 2)
+(0, 1)
+(0, 0)
+(1, 0)
+Butter finding part depth: 4
+Goal finding part depth: 10

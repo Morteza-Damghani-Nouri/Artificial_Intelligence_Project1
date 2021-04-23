@@ -349,12 +349,73 @@ def butter_counter(input_array):
     return counter
 
 
+# This function specifies the path by R L U D
+def movements_recognizer(path):
+    current_location = path[0].location
+    output_string = ""
+    i = 0
+    while i < (len(path) - 1):
+        next_location = path[i + 1].location
+        if current_location.row == next_location.row and next_location.column == current_location.column + 1:
+            output_string += "R"
+        if current_location.row == next_location.row and next_location.column == current_location.column - 1:
+            output_string += "L"
+        if current_location.row + 1 == next_location.row and next_location.column == current_location.column:
+            output_string += "D"
+        if current_location.row - 1 == next_location.row and next_location.column == current_location.column:
+            output_string += "U"
+        current_location = next_location
+        i += 1
+
+    return output_string
+
+
 # This function generates the output file and stores it in Outputs folder
-def output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, time, input_file_name, algorithm_type):
+def output_file_generator(opened_nodes, generated_nodes, cost, time, input_file_name, algorithm_type, statistic_list, butter_count):
     output_file = open("Outputs/" + input_file_name.rstrip(".txt") + "_" + algorithm_type + ".txt", "wt")
+    i = 1
+    final_result = True
+    while i <= butter_count:
+        if statistic_list[(i - 1) * 4] != "GOAL FOUND":
+            final_result = False
+            break
+        i += 1
+
+    if final_result:
+        output_file.write("RESULT: All of the goals found by " + algorithm_type + " algorithm\n")
+    else:
+        output_file.write("RESULT: Some goals could not be found by " + algorithm_type + " algorithm\n")
+
+    output_file.write("Opened nodes count: " + str(opened_nodes) + "\n")
+    output_file.write("Generated nodes count: " + str(generated_nodes) + "\n")
+    output_file.write("Total cost: " + str(cost) + "\n")
+    output_file.write("Time: " + str(time) + "\n")
+    main_path = []
+    i = 1
+    while i <= butter_count:
+        temp_path = statistic_list[(i - 1) * 4 + 1]
+        for j in temp_path:
+            main_path.append(j)
+
+        i += 1
 
 
+    output_file.write("Path: " + movements_recognizer(main_path))
 
+    i = 1
+    while i <= butter_count:
+        output_file.write("\n\n")
+        output_file.write("GOAL " + str(i) + " RESULTS: \n")
+        output_file.write("Main result: " + statistic_list[(i - 1) * 4] + "\n")
+        output_file.write("Robot path: \n")
+        for j in statistic_list[(i - 1) * 4 + 1]:
+            output_file.write("(" + str(j.location.row) + ", " + str(j.location.column) + ")\n")
+        output_file.write("Butter finding part depth: " + str(statistic_list[(i - 1) * 4 + 2]))
+        output_file.write("\n")
+        output_file.write("Goal finding part depth: " + str(statistic_list[(i - 1) * 4 + 3]))
+        i += 1
+
+    output_file.close()
 
 
 # This function implements the IDS algorithm
@@ -363,12 +424,16 @@ def ids_algorithm(input_array, row, column, input_file_name):
     generated_nodes = 1
     opened_nodes = 1
     cost = 0
-    butter_finding_part_depth = 0
-    goal_finding_part_depth = 0
     butter_count = butter_counter(input_array)
+    if butter_count == 0:
+        print("No butter is available in the input map file")
+        return 0
+    statistic_list = []
     main_counter = 1
     while main_counter <= butter_count:
         robot_location = robot_location_finder(input_array, row, column)
+        butter_finding_part_depth = 0
+        goal_finding_part_depth = 0
         finished = False
         allowed_depth = 1
         current_depth = 0
@@ -436,14 +501,6 @@ def ids_algorithm(input_array, row, column, input_file_name):
                 current_node = current_node.parent
                 path.append(current_node)
 
-        # print("path: ")
-        # for i in path:
-        #    print(str(i.location.row) + ", " + str(i.location.column))
-        # print("===============")
-        # print("Butter location: ")
-        # print(str(butter_node.location.row) + ", " + str(butter_node.location.column))
-        # print("current location: ")
-        # print(str(current_node.location.row) + ", " + str(current_node.location.column))
 
         print("The path from robot location to the butter: ")
         for i in path:
@@ -706,25 +763,22 @@ def ids_algorithm(input_array, row, column, input_file_name):
             map_printer(map_array)
             print("GOAL FOUND")
             print("=================")
-            print("The robot path: ")
-            for i in path:
-                print(str(i.location.row) + ", " + str(i.location.column))
-
-            print("=================")
-            print("The butter path: ")
-            for i in butter_path:
-                print(str(i.row) + ", " + str(i.column))
-
-            print("=================")
             input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
             input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
+
+
+
+
+
+
         main_counter += 1
 
 
     # This part of the code stops the timer
     finish_time = time.perf_counter()
+
     output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "IDS")
 
 
@@ -869,12 +923,16 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
     generated_nodes = 0
     opened_nodes = 0
     cost = 0
-    butter_finding_part_depth = 0
-    goal_finding_part_depth = 0
     butter_count = butter_counter(input_array)
+    if butter_count == 0:
+        print("No butter is available in the input map file")
+        return 0
     main_counter = 1
+    statistic_list = []
     while main_counter <= butter_count:
         path = []
+        butter_finding_part_depth = 0
+        goal_finding_part_depth = 0
         [butter_finding_result, robot_to_butter_path, opened_nodes, generated_nodes, butter_finding_part_depth,
          cost] = bidirectional_bfs_path_finder(input_array, row, column,
                                                robot_location_finder(input_array, row, column),
@@ -1166,24 +1224,27 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
             map_printer(map_array)
             print("GOAL FOUND")
             print("=================")
-            print("The robot path: ")
-            for i in path:
-                print(str(i.location.row) + ", " + str(i.location.column))
-
-            print("=================")
-            print("The butter path: ")
-            for i in butter_path:
-                print(str(i.row) + ", " + str(i.column))
-            print("=================")
             input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
             input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
+            statistic_list.append("GOAL FOUND")
+            statistic_list.append(path)
+            statistic_list.append(butter_finding_part_depth)
+            statistic_list.append(goal_finding_part_depth)
+
+
+        else:
+            statistic_list.append("FAILURE")
+            statistic_list.append(path)
+            statistic_list.append(butter_finding_part_depth)
+            statistic_list.append(goal_finding_part_depth)
+
 
         main_counter += 1
 
     finish_time = time.perf_counter()
-    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "Bidirectional_BFS")
+    output_file_generator(opened_nodes, generated_nodes, cost, finish_time - start_time, input_file_name, "Bidirectional_BFS", statistic_list, butter_count)
 
 
 # This heuristic function is used in A* algorithm and it calculates manhattan distance as the heuristic function
@@ -1273,12 +1334,15 @@ def a_star_algorithm(input_array, row, column, input_file_name):
     generated_nodes = 0
     opened_nodes = 0
     cost = 0
-    butter_finding_part_depth = 0
-    goal_finding_part_depth = 0
     butter_count = butter_counter(input_array)
+    if butter_count == 0:
+        print("No butter is available in the input map file")
+        return 0
     main_counter = 1
     while main_counter <= butter_count:
         path = []
+        butter_finding_part_depth = 0
+        goal_finding_part_depth = 0
         [butter_finding_result, robot_to_butter_path, opened_nodes, generated_nodes, butter_finding_part_depth,
          cost] = a_star_path_finder(input_array, row, column,
                                                robot_location_finder(input_array, row, column),
