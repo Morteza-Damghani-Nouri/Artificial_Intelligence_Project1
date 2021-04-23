@@ -2,21 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4a0df3a0-a147-4044-b7f5-45873af2e81a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Outputs/test5_Bidirectional_BFS.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test1_A_Star.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test1_Bidirectional_BFS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Outputs/test1_Bidirectional_BFS.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test1_IDS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test2_A_Star.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test2_Bidirectional_BFS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Outputs/test2_Bidirectional_BFS.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test2_IDS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test3_A_Star.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test3_Bidirectional_BFS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Outputs/test3_Bidirectional_BFS.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test3_IDS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test4_A_Star.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test4_Bidirectional_BFS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Outputs/test4_Bidirectional_BFS.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test4_IDS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test5_A_Star.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -118,7 +104,7 @@
       <workItem from="1618822206417" duration="17142000" />
       <workItem from="1618896941740" duration="28199000" />
       <workItem from="1618982222045" duration="37304000" />
-      <workItem from="1619153263001" duration="8664000" />
+      <workItem from="1619153263001" duration="9240000" />
     </task>
     <servers />
   </component>

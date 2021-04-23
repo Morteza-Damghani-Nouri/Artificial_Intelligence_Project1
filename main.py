@@ -767,11 +767,15 @@ def ids_algorithm(input_array, row, column, input_file_name):
             input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
-
-
-
-
-
+            statistic_list.append("GOAL FOUND")
+            statistic_list.append(path)
+            statistic_list.append(butter_finding_part_depth)
+            statistic_list.append(goal_finding_part_depth)
+        else:
+            statistic_list.append("FAILURE")
+            statistic_list.append(path)
+            statistic_list.append(butter_finding_part_depth)
+            statistic_list.append(goal_finding_part_depth)
 
         main_counter += 1
 
@@ -779,7 +783,7 @@ def ids_algorithm(input_array, row, column, input_file_name):
     # This part of the code stops the timer
     finish_time = time.perf_counter()
 
-    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "IDS")
+    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "IDS", statistic_list, butter_count)
 
 
 # This function checks if expanded nodes from top and bottom are connected
@@ -1338,6 +1342,7 @@ def a_star_algorithm(input_array, row, column, input_file_name):
     if butter_count == 0:
         print("No butter is available in the input map file")
         return 0
+    statistic_list = []
     main_counter = 1
     while main_counter <= butter_count:
         path = []
@@ -1634,26 +1639,26 @@ def a_star_algorithm(input_array, row, column, input_file_name):
             map_printer(map_array)
             print("GOAL FOUND")
             print("=================")
-            print("The robot path: ")
-            for i in path:
-                print(str(i.location.row) + ", " + str(i.location.column))
-
-            print("=================")
-            print("The butter path: ")
-            for i in butter_path:
-                print(str(i.row) + ", " + str(i.column))
-            print("=================")
             input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
             input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][
                 first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
+            statistic_list.append("GOAL FOUND")
+            statistic_list.append(path)
+            statistic_list.append(butter_finding_part_depth)
+            statistic_list.append(goal_finding_part_depth)
+
+        else:
+            statistic_list.append("FAILURE")
+            statistic_list.append(path)
+            statistic_list.append(butter_finding_part_depth)
+            statistic_list.append(goal_finding_part_depth)
 
         main_counter += 1
 
     finish_time = time.perf_counter()
-    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost,
-                          finish_time - start_time, input_file_name, "A_Star")
+    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "A_Star", statistic_list, butter_count)
 
 
 # Main part of the project starts here
