@@ -2,28 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4a0df3a0-a147-4044-b7f5-45873af2e81a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Outputs/A Star/test1_A_Star.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/A Star/test2_A_Star.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/A Star/test3_A_Star.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/A Star/test4_A_Star.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/A Star/test5_A_Star.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/Bidirectional BFS/test1_Bidirectional_BFS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/Bidirectional BFS/test2_Bidirectional_BFS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/Bidirectional BFS/test3_Bidirectional_BFS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/Bidirectional BFS/test4_Bidirectional_BFS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/Bidirectional BFS/test5_Bidirectional_BFS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/IDS/test1_IDS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/IDS/test2_IDS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/IDS/test3_IDS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/IDS/test4_IDS.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Outputs/IDS/test5_IDS.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test1_Bidirectional_BFS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test2_Bidirectional_BFS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test3_Bidirectional_BFS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test4_Bidirectional_BFS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/test5_Bidirectional_BFS.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +33,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/AI_P1_9625801/src" />
   </component>
   <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -124,7 +103,7 @@
       <workItem from="1618822206417" duration="17142000" />
       <workItem from="1618896941740" duration="28199000" />
       <workItem from="1618982222045" duration="37304000" />
-      <workItem from="1619153263001" duration="14936000" />
+      <workItem from="1619153263001" duration="16334000" />
     </task>
     <servers />
   </component>
@@ -135,22 +114,26 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1237" height="241" key="GridCell.Tab.0.bottom" timestamp="1619172059478">
+    <state x="421" y="95" key="FileChooserDialogImpl" timestamp="1619173823284">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="241" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1619172059478" />
-    <state width="1237" height="241" key="GridCell.Tab.0.center" timestamp="1619172059478">
+    <state x="421" y="95" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1619173823284" />
+    <state width="1237" height="241" key="GridCell.Tab.0.bottom" timestamp="1619174008046">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="241" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1619172059478" />
-    <state width="1237" height="241" key="GridCell.Tab.0.left" timestamp="1619172059478">
+    <state width="1237" height="241" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1619174008046" />
+    <state width="1237" height="241" key="GridCell.Tab.0.center" timestamp="1619174008046">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="241" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1619172059478" />
-    <state width="1237" height="241" key="GridCell.Tab.0.right" timestamp="1619172059478">
+    <state width="1237" height="241" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1619174008046" />
+    <state width="1237" height="241" key="GridCell.Tab.0.left" timestamp="1619174008046">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="241" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1619172059478" />
+    <state width="1237" height="241" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1619174008046" />
+    <state width="1237" height="241" key="GridCell.Tab.0.right" timestamp="1619174008046">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state width="1237" height="241" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1619174008046" />
     <state width="1237" height="204" key="GridCell.Tab.1.bottom" timestamp="1618775550049">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
