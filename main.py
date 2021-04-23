@@ -2,12 +2,12 @@ import random
 import time
 import threading
 
+
 # This class determines the location of nodes
 class Location:
     def __init__(self, input_row, input_column):
         self.row = input_row
         self.column = input_column
-
 
     row = -1
     column = -1
@@ -17,9 +17,6 @@ class Location:
 class Node:
     def __init__(self, input_location):
         self.location = input_location
-
-
-
 
     location = ""
     parent = ""
@@ -82,7 +79,6 @@ def is_goal_available(children):
         if i.content.find('p') != -1:
             return i
     return False
-
 
 
 # This function checks if input location is available among the input children or not
@@ -158,8 +154,6 @@ def butter_children_finder(input_array, node, row, column):
             child.cost = cost_finder(child)
             children.append(child)
 
-
-
     if node.parent != "":
         parent_node = node.parent
         for i in children:
@@ -208,8 +202,6 @@ def goal_children_finder(input_array, node, row, column):
             children.append(child)
 
     return children
-
-
 
 
 # This function is used to find the proper location of the robot to push the butter
@@ -273,8 +265,6 @@ def ids_path_finder(input_array, row, column, start_location, local_goal_locatio
                     current_node.cost = cost_finder(current_node)
                     path = [current_node]
 
-
-
         if failure:
             return [failure, path]
         if finished:
@@ -283,8 +273,6 @@ def ids_path_finder(input_array, row, column, start_location, local_goal_locatio
             current_depth = current_depth - 1
             current_node = current_node.parent
             path.append(current_node)
-
-
 
     path.append(butter_node)
     return [failure, path, opened_nodes, generated_nodes, current_depth, cost]
@@ -312,8 +300,6 @@ def x_locator(input_array, row, column):
             j += 1
         i += 1
     return output_array
-
-
 
 
 # This function copies the input array
@@ -357,13 +343,13 @@ def movements_recognizer(path):
     while i < (len(path) - 1):
         next_location = path[i + 1].location
         if current_location.row == next_location.row and next_location.column == current_location.column + 1:
-            output_string += "R"
+            output_string += "R "
         if current_location.row == next_location.row and next_location.column == current_location.column - 1:
-            output_string += "L"
+            output_string += "L "
         if current_location.row + 1 == next_location.row and next_location.column == current_location.column:
-            output_string += "D"
+            output_string += "D "
         if current_location.row - 1 == next_location.row and next_location.column == current_location.column:
-            output_string += "U"
+            output_string += "U "
         current_location = next_location
         i += 1
 
@@ -371,7 +357,8 @@ def movements_recognizer(path):
 
 
 # This function generates the output file and stores it in Outputs folder
-def output_file_generator(opened_nodes, generated_nodes, cost, time, input_file_name, algorithm_type, statistic_list, butter_count):
+def output_file_generator(opened_nodes, generated_nodes, cost, time, input_file_name, algorithm_type, statistic_list,
+                          butter_count):
     output_file = open("Outputs/" + input_file_name.rstrip(".txt") + "_" + algorithm_type + ".txt", "wt")
     i = 1
     final_result = True
@@ -398,7 +385,6 @@ def output_file_generator(opened_nodes, generated_nodes, cost, time, input_file_
             main_path.append(j)
 
         i += 1
-
 
     output_file.write("Path: " + movements_recognizer(main_path))
 
@@ -501,15 +487,12 @@ def ids_algorithm(input_array, row, column, input_file_name):
                 current_node = current_node.parent
                 path.append(current_node)
 
-
         print("The path from robot location to the butter: ")
         for i in path:
             map_array = x_locator(input_array, row, column)
             map_array[i.location.row][i.location.column] = "r"
             map_array[butter_node.location.row][butter_node.location.column] = "b"
             map_printer(map_array)
-
-
 
         print("BUTTER FOUND")
         goal_finding_part_depth = 0
@@ -518,7 +501,6 @@ def ids_algorithm(input_array, row, column, input_file_name):
         copy_input_array = array_copier(input_array, row, column)
         robot_location = current_node.location
         goal_finished = False
-
 
         first_butter_node = butter_node
         butter_path = [butter_node.location]
@@ -532,10 +514,13 @@ def ids_algorithm(input_array, row, column, input_file_name):
 
                 if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column - 1:
                     if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column + 1, row,
-                                  column) and copy_input_array[butter_node.location.row][butter_node.location.column + 1] != "x":
+                                  column) and copy_input_array[butter_node.location.row][
+                        butter_node.location.column + 1] != "x":
                         local_goal_location = Location(butter_node.location.row, butter_node.location.column + 1)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = ids_path_finder(copy_input_array, row, column, robot_location,
+                                                            local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -562,10 +547,10 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                 goal_finished = True
                                 break
                             copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
+                                input_array[butter_node.location.row][butter_node.location.column]
                             if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
                                 copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
                             # copy_input_array[next_node.location.row][next_node.location.column] = "x"
                             butter_node = Node(Location(next_node.location.row, next_node.location.column))
 
@@ -581,10 +566,13 @@ def ids_algorithm(input_array, row, column, input_file_name):
                 if next_node.location.row == butter_node.location.row and next_node.location.column == butter_node.location.column + 1:
 
                     if does_exist(copy_input_array, butter_node.location.row, butter_node.location.column - 1, row,
-                                  column) and copy_input_array[butter_node.location.row][butter_node.location.column - 1] != "x":
+                                  column) and copy_input_array[butter_node.location.row][
+                        butter_node.location.column - 1] != "x":
                         local_goal_location = Location(butter_node.location.row, butter_node.location.column - 1)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = ids_path_finder(copy_input_array, row, column, robot_location,
+                                                            local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -612,10 +600,10 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                 goal_finished = True
                                 break
                             copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
+                                input_array[butter_node.location.row][butter_node.location.column]
                             if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
                                 copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
                             # copy_input_array[next_node.location.row][next_node.location.column] = "x"
                             butter_node = Node(Location(next_node.location.row, next_node.location.column))
 
@@ -629,10 +617,13 @@ def ids_algorithm(input_array, row, column, input_file_name):
 
                 if next_node.location.row == butter_node.location.row - 1 and next_node.location.column == butter_node.location.column:
                     if does_exist(copy_input_array, butter_node.location.row + 1, butter_node.location.column, row,
-                                  column) and copy_input_array[butter_node.location.row + 1][butter_node.location.column] != "x":
+                                  column) and copy_input_array[butter_node.location.row + 1][
+                        butter_node.location.column] != "x":
                         local_goal_location = Location(butter_node.location.row + 1, butter_node.location.column)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = ids_path_finder(copy_input_array, row, column, robot_location,
+                                                            local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -660,10 +651,10 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                 goal_finished = True
                                 break
                             copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
+                                input_array[butter_node.location.row][butter_node.location.column]
                             if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
                                 copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
                             # copy_input_array[next_node.location.row][next_node.location.column] = "x"
                             butter_node = Node(Location(next_node.location.row, next_node.location.column))
 
@@ -677,10 +668,13 @@ def ids_algorithm(input_array, row, column, input_file_name):
 
                 if next_node.location.row == butter_node.location.row + 1 and next_node.location.column == butter_node.location.column:
                     if does_exist(copy_input_array, butter_node.location.row - 1, butter_node.location.column, row,
-                                  column) and copy_input_array[butter_node.location.row - 1][butter_node.location.column] != "x":
+                                  column) and copy_input_array[butter_node.location.row - 1][
+                        butter_node.location.column] != "x":
                         local_goal_location = Location(butter_node.location.row - 1, butter_node.location.column)
                         if robot_location.row != local_goal_location.row or robot_location.column != local_goal_location.column:
-                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth, output_cost] = ids_path_finder(copy_input_array, row, column, robot_location, local_goal_location, opened_nodes, generated_nodes)
+                            [failure_result, local_path, opened_nodes, generated_nodes, output_depth,
+                             output_cost] = ids_path_finder(copy_input_array, row, column, robot_location,
+                                                            local_goal_location, opened_nodes, generated_nodes)
                             goal_finding_part_depth += output_depth
                             cost += output_cost
                         else:
@@ -707,10 +701,10 @@ def ids_algorithm(input_array, row, column, input_file_name):
                                 goal_finished = True
                                 break
                             copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                            input_array[butter_node.location.row][butter_node.location.column]
+                                input_array[butter_node.location.row][butter_node.location.column]
                             if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
                                 copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                                copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                                    copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
                             # copy_input_array[next_node.location.row][next_node.location.column] = "x"
                             butter_node = Node(Location(next_node.location.row, next_node.location.column))
 
@@ -736,10 +730,10 @@ def ids_algorithm(input_array, row, column, input_file_name):
                         goal_finished = True
                         break
                     copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                    input_array[butter_node.location.row][butter_node.location.column]
+                        input_array[butter_node.location.row][butter_node.location.column]
                     if copy_input_array[butter_node.location.row][butter_node.location.column].find('b') != -1:
                         copy_input_array[butter_node.location.row][butter_node.location.column] = \
-                        copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
+                            copy_input_array[butter_node.location.row][butter_node.location.column].rstrip('b')
                     # copy_input_array[next_node.location.row][next_node.location.column] = "x"
                     butter_node = Node(Location(next_node.location.row, next_node.location.column))
 
@@ -764,7 +758,8 @@ def ids_algorithm(input_array, row, column, input_file_name):
             print("GOAL FOUND")
             print("=================")
             input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
-            input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
+            input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][
+                first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
             statistic_list.append("GOAL FOUND")
@@ -779,11 +774,11 @@ def ids_algorithm(input_array, row, column, input_file_name):
 
         main_counter += 1
 
-
     # This part of the code stops the timer
     finish_time = time.perf_counter()
 
-    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "IDS", statistic_list, butter_count)
+    output_file_generator(opened_nodes, generated_nodes, cost, finish_time - start_time, input_file_name, "IDS",
+                          statistic_list, butter_count)
 
 
 # This function checks if expanded nodes from top and bottom are connected
@@ -802,7 +797,8 @@ def bidirectional_bfs_thread_part(children, fringe_list):
 
 
 # This function is used to find the proper location of the robot to push the butter
-def bidirectional_bfs_path_finder(input_array, row, column, start_location, local_goal_location, opened_nodes, generated_nodes):
+def bidirectional_bfs_path_finder(input_array, row, column, start_location, local_goal_location, opened_nodes,
+                                  generated_nodes):
     goal_found = False
     current_depth = 0
     cost = 0
@@ -838,7 +834,8 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
     # Main part of the bidirectional BFS algorithm
     while len(top_fringe_list) != 0 and len(bottom_fringe_list) != 0:
 
-        [is_connected_result, top_connected_node, bottom_connected_node] = is_connected(top_fringe_list, bottom_fringe_list)
+        [is_connected_result, top_connected_node, bottom_connected_node] = is_connected(top_fringe_list,
+                                                                                        bottom_fringe_list)
 
         if is_connected_result:
             goal_found = True
@@ -874,15 +871,16 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
                 top_fringe_list.append(i)
             current_depth += 2
 
-
             # Bottom part of the search graph
             bottom_current_node = bottom_fringe_list[0]
             bottom_fringe_list.pop(0)
             bottom_current_node.children = butter_children_finder(input_array, bottom_current_node, row, column)
 
             # The main part of the bidirectional BFS is executed by separated threads
-            top_path_process = threading.Thread(target=bidirectional_bfs_thread_part, args=(top_current_node.children, top_fringe_list))
-            bottom_path_process = threading.Thread(target=bidirectional_bfs_thread_part, args=(bottom_current_node.children, bottom_fringe_list))
+            top_path_process = threading.Thread(target=bidirectional_bfs_thread_part,
+                                                args=(top_current_node.children, top_fringe_list))
+            bottom_path_process = threading.Thread(target=bidirectional_bfs_thread_part,
+                                                   args=(bottom_current_node.children, bottom_fringe_list))
             top_path_process.start()
             bottom_path_process.start()
             while bottom_path_process.is_alive() or top_path_process.is_alive():
@@ -900,25 +898,22 @@ def bidirectional_bfs_path_finder(input_array, row, column, start_location, loca
         for i in bottom_path:
             path.append(i)
 
-
         # By uncommenting these comments the bidirectional paths will print
         # print("The top path is: ")
         # for i in top_path:
         #     print(str(i.location.row) + ", " + str(i.location.column))
 
-
         # print("The bottom path is: ")
         # for i in bottom_path:
         #     print(str(i.location.row) + ", " + str(i.location.column))
 
-
-        return[not goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
+        return [not goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
 
 
 
     else:
         print("UNABLE TO FIND A PATH TO THE GOAL BY BIDIRECTIONAL BFS ALGORITHM")
-        return[not goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
+        return [not goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
 
 
 # Bidirectional BFS algorithm is implemented here
@@ -942,12 +937,12 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
                                                robot_location_finder(input_array, row, column),
                                                butter_location_finder(input_array, row, column), opened_nodes,
                                                generated_nodes)
-        if not butter_finding_result:
-            print("The butter path is: ")
-            for i in robot_to_butter_path:
-                print(str(i.location.row) + ", " + str(i.location.column))
+        # if not butter_finding_result:
+        # print("The butter path is: ")
+        # for i in robot_to_butter_path:
+        # print(str(i.location.row) + ", " + str(i.location.column))
 
-        else:
+        if butter_finding_result:
             return 0
 
         first_robot_location = robot_to_butter_path[0].location
@@ -1229,7 +1224,8 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
             print("GOAL FOUND")
             print("=================")
             input_array[first_butter_node.location.row][first_butter_node.location.column] = str(first_butter_node.cost)
-            input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][first_robot_location.column].rstrip("r")
+            input_array[first_robot_location.row][first_robot_location.column] = input_array[first_robot_location.row][
+                first_robot_location.column].rstrip("r")
             input_array[butter_path[-1].row][butter_path[-1].column] = "x"
             input_array[robot_location.row][robot_location.column] += "r"
             statistic_list.append("GOAL FOUND")
@@ -1244,11 +1240,11 @@ def bidirectional_bfs_algorithm(input_array, row, column, input_file_name):
             statistic_list.append(butter_finding_part_depth)
             statistic_list.append(goal_finding_part_depth)
 
-
         main_counter += 1
 
     finish_time = time.perf_counter()
-    output_file_generator(opened_nodes, generated_nodes, cost, finish_time - start_time, input_file_name, "Bidirectional_BFS", statistic_list, butter_count)
+    output_file_generator(opened_nodes, generated_nodes, cost, finish_time - start_time, input_file_name,
+                          "Bidirectional_BFS", statistic_list, butter_count)
 
 
 # This heuristic function is used in A* algorithm and it calculates manhattan distance as the heuristic function
@@ -1293,7 +1289,6 @@ def a_star_path_finder(input_array, row, column, start_location, local_goal_loca
     cost += current_node.cost
     path = [current_node]
 
-
     fringe_list = []
     current_node.children = butter_children_finder(input_array, current_node, row, column)
     for i in current_node.children:
@@ -1329,7 +1324,7 @@ def a_star_path_finder(input_array, row, column, start_location, local_goal_loca
         return [not goal_found, path, opened_nodes, generated_nodes, current_depth, cost]
     else:
         print("UNABLE TO FIND A PATH TO THE GOAL BY A* ALGORITHM")
-        return[not goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
+        return [not goal_found, [], opened_nodes, generated_nodes, current_depth, cost]
 
 
 # A* algorithm is implemented here
@@ -1350,15 +1345,15 @@ def a_star_algorithm(input_array, row, column, input_file_name):
         goal_finding_part_depth = 0
         [butter_finding_result, robot_to_butter_path, opened_nodes, generated_nodes, butter_finding_part_depth,
          cost] = a_star_path_finder(input_array, row, column,
-                                               robot_location_finder(input_array, row, column),
-                                               butter_location_finder(input_array, row, column), opened_nodes,
-                                               generated_nodes)
-        if not butter_finding_result:
-            print("The butter path is: ")
-            for i in robot_to_butter_path:
-                print(str(i.location.row) + ", " + str(i.location.column))
+                                    robot_location_finder(input_array, row, column),
+                                    butter_location_finder(input_array, row, column), opened_nodes,
+                                    generated_nodes)
+        # if not butter_finding_result:
+        # print("The butter path is: ")
+        # for i in robot_to_butter_path:
+        # print(str(i.location.row) + ", " + str(i.location.column))
 
-        else:
+        if butter_finding_result:
             return 0
 
         first_robot_location = robot_to_butter_path[0].location
@@ -1658,7 +1653,8 @@ def a_star_algorithm(input_array, row, column, input_file_name):
         main_counter += 1
 
     finish_time = time.perf_counter()
-    output_file_generator(opened_nodes, generated_nodes, butter_finding_part_depth, goal_finding_part_depth, cost, finish_time - start_time, input_file_name, "A_Star", statistic_list, butter_count)
+    output_file_generator(opened_nodes, generated_nodes, cost, finish_time - start_time, input_file_name, "A_Star",
+                          statistic_list, butter_count)
 
 
 # Main part of the project starts here
@@ -1735,80 +1731,9 @@ try:
     if algorithm_type == "3":
         a_star_algorithm(copy_input_array, row, column, input_file_name)
 
-
     input_file.close()
 
 
 
 except (FileExistsError, FileNotFoundError) as e:
     print("This file does not exist in the Inputs folder")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

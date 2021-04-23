@@ -1,0 +1,26 @@
+RESULT: All of the goals found by IDS algorithm
+Opened nodes count: 7
+Generated nodes count: 25
+Total cost: 19
+Time: 0.012822399999999234
+Path: L U D D D R L L L D U 
+
+GOAL 1 RESULTS: 
+Main result: GOAL FOUND
+Robot path: 
+(1, 3)
+(1, 2)
+(0, 2)
+(1, 2)
+(2, 2)
+(2, 2)
+(3, 2)
+(3, 3)
+(3, 2)
+(3, 1)
+(3, 1)
+(3, 0)
+(4, 0)
+(3, 0)
+Butter finding part depth: 0
+Goal finding part depth: 3
